@@ -3,7 +3,7 @@ import cors from 'cors'
 import 'dotenv/config.js'
 import connectDB from './config/mongoDb.js'
 import connectCloudinary from './config/cloudinary.js'
-import inventoryRoute from './router/inventryRouter.js';  // Correct the import path
+import inventoryRouter from './router/inventryRouter.js'
 
 
 // app config
@@ -22,8 +22,8 @@ app.use(cors())
 
 //API Routes
 
-app.use('/api/inventory', inventoryRoute);
-// api endpoints
+app.use('/api/inventory', inventoryRouter);
+
 
 app.get('/',(req,res)=>{
 
