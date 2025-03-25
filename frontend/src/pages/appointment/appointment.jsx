@@ -52,14 +52,11 @@ function AppointmentForm() {
       const result = await response.json();
       if (response.ok) {
         setExistingAppointments(result.appointments || []);
-        return result.appointments || [];
       } else {
         console.error('Failed to fetch appointments:', result.message);
-        return [];
       }
     } catch (error) {
       console.error('Error fetching appointments:', error);
-      return [];
     }
   };
 
@@ -116,23 +113,27 @@ function AppointmentForm() {
     }
   };
 
+  // Restrict input to letters (A-Z, a-z) and spaces only
   const handleNameKeyPress = (e) => {
     const charCode = e.charCode;
+    // Allow A-Z (65-90), a-z (97-122), and space (32)
     if (!(charCode === 32 || (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122))) {
       e.preventDefault();
     }
   };
 
+  // Restrict input to letters only (A-Z) and prevent spaces
   const handleLettersKeyPress = (e) => {
     const charCode = e.charCode;
-    if (charCode === 32 || (charCode < 65 || charCode > 90)) {
+    if (charCode === 32 || (charCode < 65 || charCode > 90)) { // 32 is space, 65-90 is A-Z
       e.preventDefault();
     }
   };
 
+  // Restrict input to numbers only (0-9) and prevent spaces
   const handleNumbersKeyPress = (e) => {
     const charCode = e.charCode;
-    if (charCode === 32 || (charCode < 48 || charCode > 57)) {
+    if (charCode === 32 || (charCode < 48 || charCode > 57)) { // 32 is space, 48-57 is 0-9
       e.preventDefault();
     }
   };
@@ -209,12 +210,10 @@ function AppointmentForm() {
     }
   };
 
-  const validateTimeSlot = async (date, time) => {
+  const validateTimeSlot = (date, time) => {
     if (!date || !time) return false;
 
-    // Fetch the latest appointments from the database
-    const appointments = await fetchAppointments();
-    const bookingsForSlot = appointments.filter(
+    const bookingsForSlot = existingAppointments.filter(
       (appointment) => appointment.date === date && appointment.time === time
     );
 
@@ -242,12 +241,14 @@ function AppointmentForm() {
 
     let formErrors = {};
 
+    // Validate full name
     if (!formData.Aname) {
       formErrors.Aname = 'Full name is required';
     } else if (!/^[A-Za-z\s]+$/.test(formData.Aname)) {
       formErrors.Aname = 'Full name must contain only letters and spaces';
     }
 
+    // Validate phone number
     const phoneRegex = /^\d{9}$/;
     const firstDigit = phoneInput.slice(0, 1);
     const secondDigit = phoneInput.slice(1, 2);
@@ -259,6 +260,7 @@ function AppointmentForm() {
       formErrors.Aphone = 'Phone number must be exactly 9 digits (e.g., 769400272)';
     }
 
+    // Validate vehicle number
     const letters = formData.AvnumLetters;
     const numbers = formData.AvnumNumbers;
 
@@ -272,10 +274,12 @@ function AppointmentForm() {
       formErrors.AvnumNumbers = 'Vehicle number must end with exactly 4 digits (e.g., 1234)';
     }
 
+    // Validate vehicle type
     if (!formData.Avtype) {
       formErrors.Avtype = 'Please select a vehicle type';
     }
 
+    // Validate date
     const selectedDate = new Date(formData.date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -285,16 +289,14 @@ function AppointmentForm() {
       formErrors.date = 'You cannot select today or a past date. Please select a date starting from tomorrow.';
     }
 
+    // Validate time slot
     if (!formData.time) {
       formErrors.time = 'Please select a time slot';
-    } else {
-      // Validate time slot with the latest database data
-      const isTimeSlotAvailable = await validateTimeSlot(formData.date, formData.time);
-      if (!isTimeSlotAvailable) {
-        formErrors.time = 'This time slot is already booked by 2 users. Please select a different time.';
-      }
+    } else if (!validateTimeSlot(formData.date, formData.time)) {
+      formErrors.time = 'This time slot is already booked by 2 users. Please select a different time.';
     }
 
+    // Validate services
     if (formData.service.length === 0) {
       formErrors.service = 'Please select at least one service';
     }
@@ -339,7 +341,7 @@ function AppointmentForm() {
         });
         setPhoneInput('');
         setErrors({});
-        await fetchAppointments(); // Update appointments after booking
+        await fetchAppointments();
       } else {
         alert(`Failed to book appointment: ${result.message || 'Please try again.'}`);
       }
@@ -358,7 +360,7 @@ function AppointmentForm() {
       <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 transform transition-all duration-500 hover:shadow-2xl">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">
-            Appointment <span className="text-[#006AFF]">Reservation</span>
+            Appointment <span className="text-[#034396]">Reservation</span>
           </h1>
           <p className="mt-2 text-sm text-gray-500">Schedule your car service with ease</p>
         </div>
@@ -599,7 +601,7 @@ function AppointmentForm() {
 
           <button
             type="submit"
-            className="w-full bg-[#006AFF] text-white py-3 rounded-lg font-semibold text-lg hover:bg-[#0052CC] transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md"
+            className="w-full bg-[#03326f] text-white py-3 rounded-lg font-semibold text-lg hover:bg-[#0052CC] transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md"
           >
             Book Appointment
           </button>
@@ -607,7 +609,7 @@ function AppointmentForm() {
 
         <Link
           to="/"
-          className="block text-center mt-6 text-[#006AFF] font-medium hover:underline transition-all duration-300"
+          className="block text-center mt-6 text-[#03326F] font-medium hover:underline transition-all duration-300"
         >
           Back to Home
         </Link>
