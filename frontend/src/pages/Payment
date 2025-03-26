@@ -1,0 +1,10 @@
+const [customerDetails, setCustomerDetails] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
+    deliveryAddress: '',
+    paymentMethod: '',
+    productsList: [],
+    total: 0
+  });
