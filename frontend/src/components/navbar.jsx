@@ -1,57 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { IoIosMail } from "react-icons/io";
 import { IoCallSharp } from "react-icons/io5";
 import { FaRegClock } from "react-icons/fa";
-import { IoLocationOutline } from "react-icons/io5";
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaGoogle } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import axios from 'axios';
 import logo from '../assets/Home/Logo3.webp'; // Import logo from src/assets
 
 function NavBar() {
-    const [userData, setUserData] = useState(null);
-    const [image, setImage] = useState(null);
-
-    // Fetch user session data (login status)
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/Session');
-                setUserData(response.data);
-                console.log('User data fetched:', response.data);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-
-        fetchUserData();
-    }, []);
-
-    // Fetch user profile image (if any)
-    useEffect(() => {
-        const fetchImages = async () => {
-            if (userData) {
-                const imageUrl = `http://localhost:5000/ImageUploads?customerId=${userData.userId}`;
-                try {
-                    const response = await axios.get(imageUrl);
-                    if (response.data.images && response.data.images.length > 0) {
-                        setImage(response.data.images[0].imageUrl);
-                        console.log('Image URL:', response.data.images[0].imageUrl);
-                    }
-                } catch (error) {
-                    console.error('Error fetching images:', error);
-                }
-            }
-        };
-
-        fetchImages();
-    }, [userData]);
-
     return (
         <div className="h-fit mb-14 scroll-smooth">
             {/* Header Section */}
             <div className="z-40 absolute w-[250px] h-[100px] bg-[#006AFF] angled-rectangle1">
-                <img src={logo} alt="Logo" className=" w-[250px]  h-[130px] bg-cover bg-center" /> {/* Using the imported logo */}
+                <img src={logo} alt="Logo" className="w-[250px] h-[130px] bg-cover bg-center" />
             </div>
 
             <div className="absolute w-[330px] h-[132px] bg-[#111827] angled-rectangle2 z-20"></div>
@@ -141,24 +101,23 @@ function NavBar() {
                             CONTACT US
                         </li>
                     </Link>
+                    <Link to="/appointments">
+                        <li className="hover:text-[#006AFF] transition duration-200 cursor-pointer">
+                            APPOINTMENTS
+                        </li>
+                    </Link>
+                    <Link to="/appointment-form">
+                        <li className="hover:text-[#006AFF] transition duration-200 cursor-pointer">
+                            BOOK APPOINTMENT
+                        </li>
+                    </Link>
 
-                    {/* Buttons with conditional rendering */}
                     <li className="flex items-center gap-2">
-                        {userData ? (
-                            <Link to="/Profile">
-                                <img
-                                    src={image ? `http://localhost:5000/${image}` : "https://www.skanlibrary.org/app/uploads/2018/12/mystery-person-300x300.png"}
-                                    alt="Profile"
-                                    className="rounded-full w-[45px] h-[45px] object-cover border-[2.4px] border-green-400 transition duration-300"
-                                />
-                            </Link>
-                        ) : (
-                            <Link to="/Login">
-                                <button className="bg-transparent border border-[#006AFF] text-[#006AFF] w-[100px] px-4 py-2 shadow-md hover:bg-[#006AFF] hover:text-white transition duration-200">
-                                    Sign In
-                                </button>
-                            </Link>
-                        )}
+                        <Link to="/Login">
+                            <button className="bg-transparent border border-[#006AFF] text-[#006AFF] w-[100px] px-4 py-2 shadow-md hover:bg-[#006AFF] hover:text-white transition duration-300">
+                                Sign In
+                            </button>
+                        </Link>
                     </li>
                 </ul>
             </div>

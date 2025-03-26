@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
-function AppointmentForm() {
+function AppointmentUpdate() {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     AID: '',
     Aname: '',
@@ -16,9 +19,8 @@ function AppointmentForm() {
     date: '',
     time: '',
   });
-
-  const [errors, setErrors] = useState({});
   const [phoneInput, setPhoneInput] = useState('');
+  const [errors, setErrors] = useState({});
   const [existingAppointments, setExistingAppointments] = useState([]);
 
   const vehicleTypes = [
@@ -27,16 +29,12 @@ function AppointmentForm() {
     'Subaru', 'Lexus', 'Jaguar', 'Land Rover', 'Volvo', 'Mitsubishi', 'Other'
   ];
 
-  const generateAppointmentID = () => {
-    const now = new Date();
-    const year = now.getFullYear().toString().slice(-2);
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    return `SA${year}${month}${day}${hours}${minutes}${seconds}`;
-  };
+  const timeSlots = [
+    '8:00 AM - 9:00 AM', '9:00 AM - 10:00 AM', '10:00 AM - 11:00 AM',
+    '11:00 AM - 12:00 PM', '12:00 PM - 1:00 PM', '1:00 PM - 2:00 PM',
+    '2:00 PM - 3:00 PM', '3:00 PM - 4:00 PM', '4:00 PM - 5:00 PM',
+    '5:00 PM - 6:00 PM'
+  ];
 
   const getTomorrowDate = () => {
     const tomorrow = new Date();
@@ -49,7 +47,7 @@ function AppointmentForm() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch('http://localhost:9000/api/appointment/get-appointments');
+      const response = await fetch('http://localhost:9000/api/appointment/get-all-appointments');
       const result = await response.json();
       if (response.ok) {
         setExistingAppointments(result.appointments || []);
@@ -62,13 +60,42 @@ function AppointmentForm() {
   };
 
   useEffect(() => {
-    const newAID = generateAppointmentID();
-    setFormData((prevData) => ({
-      ...prevData,
-      AID: newAID,
-    }));
+    const fetchAppointment = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:9000/api/appointment/view-appointment/${id}`);
+        const result = await response.json();
+
+        if (response.ok) {
+          const [letters, numbers] = result.Avnum.split(' ');
+          setFormData({
+            AID: result.AID || '',
+            Aname: result.Aname || '',
+            Aphone: result.Aphone || '',
+            AregID: result.AregID || '',
+            Avtype: result.Avtype || '',
+            AvnumLetters: letters || '',
+            AvnumNumbers: numbers || '',
+            service: result.service || [],
+            comment: result.comment || '',
+            date: result.date || '',
+            time: result.time || '',
+          });
+          setPhoneInput(result.Aphone ? result.Aphone.slice(3) : ''); // Remove +94 prefix
+          setLoading(false);
+        } else {
+          setError(result.message || 'Failed to fetch appointment');
+          setLoading(false);
+        }
+      } catch (err) {
+        setError('Error fetching appointment: ' + err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchAppointment();
     fetchAppointments();
-  }, []);
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -93,9 +120,7 @@ function AppointmentForm() {
         ...prevData,
         [name]: value,
       }));
-      if (name === 'Aname') {
-        validateName(value);
-      }
+      if (name === 'Aname') validateName(value);
       if (name === 'AvnumLetters' || name === 'AvnumNumbers') {
         validateVehicleNumber(
           name === 'AvnumLetters' ? value : formData.AvnumLetters,
@@ -108,9 +133,7 @@ function AppointmentForm() {
           name === 'time' ? value : formData.time
         );
       }
-      if (name === 'date') {
-        validateDate(value);
-      }
+      if (name === 'date') validateDate(value);
     }
   };
 
@@ -139,7 +162,7 @@ function AppointmentForm() {
     if (name && !/^[A-Za-z\s]+$/.test(name)) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        Aname: 'Full name must contain only lettersand spaces',
+        Aname: 'Full name must contain only letters and spaces',
       }));
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, Aname: '' }));
@@ -211,7 +234,7 @@ function AppointmentForm() {
     if (!date || !time) return false;
 
     const bookingsForSlot = existingAppointments.filter(
-      (appointment) => appointment.date === date && appointment.time === time
+      (appointment) => appointment.date === date && appointment.time === time && appointment._id !== id
     );
 
     if (bookingsForSlot.length >= 2) {
@@ -225,13 +248,6 @@ function AppointmentForm() {
       return true;
     }
   };
-
-  const timeSlots = [
-    '8:00 AM - 9:00 AM', '9:00 AM - 10:00 AM', '10:00 AM - 11:00 AM',
-    '11:00 AM - 12:00 PM', '12:00 PM - 1:00 PM', '1:00 PM - 2:00 PM',
-    '2:00 PM - 3:00 PM', '3:00 PM - 4:00 PM', '4:00 PM - 5:00 PM',
-    '5:00 PM - 6:00 PM'
-  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -303,8 +319,8 @@ function AppointmentForm() {
     };
 
     try {
-      const response = await fetch('http://localhost:9000/api/appointment/add-appointment', {
-        method: 'POST',
+      const response = await fetch(`http://localhost:9000/api/appointment/update-appointment/${id}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -314,40 +330,19 @@ function AppointmentForm() {
       const result = await response.json();
 
       if (response.ok) {
-        alert('Appointment booked successfully!');
-        const newAID = generateAppointmentID();
-        setFormData({
-          AID: newAID,
-          Aname: '',
-          Aphone: '',
-          AregID: '',
-          Avtype: '',
-          AvnumLetters: '',
-          AvnumNumbers: '',
-          service: [],
-          comment: '',
-          date: '',
-          time: '',
-        });
-        setPhoneInput('');
-        setErrors({});
-        await fetchAppointments();
+        alert('Appointment updated successfully!');
+        navigate('/appointments');
       } else {
-        alert(`Failed to book appointment: ${result.message || 'Please try again.'}`);
+        alert(`Failed to update appointment: ${result.message || 'Please try again.'}`);
       }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      if (error.message.includes('Failed to fetch')) {
-        alert('Cannot connect to the server. Please ensure the backend server is running on http://localhost:3000.');
-      } else {
-        alert(`An error occurred: ${error.message}`);
-      }
+    } catch (err) {
+      console.error('Update Error:', err);
+      alert(`Error updating appointment: ${err.message}`);
     }
   };
 
-  const handleSeeAppointments = () => {
-    navigate('/appointments');
-  };
+  if (loading) return <div className="min-h-screen bg-gray-100 flex items-center justify-center"><p>Loading...</p></div>;
+  if (error) return <div className="min-h-screen bg-gray-100 flex items-center justify-center"><p className="text-red-500">{error}</p></div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -355,9 +350,9 @@ function AppointmentForm() {
         <div className="flex justify-between items-center mb-8">
           <div className="text-center flex-1">
             <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">
-              Appointment <span className="text-[#034396]">Reservation</span>
+              Update <span className="text-[#034396]">Appointment</span>
             </h1>
-            <p className="mt-2 text-sm text-gray-500">Schedule your car service with ease</p>
+            <p className="mt-2 text-sm text-gray-500">Modify your car service appointment</p>
           </div>
         </div>
 
@@ -599,27 +594,21 @@ function AppointmentForm() {
             type="submit"
             className="w-full bg-[#03326f] text-white py-3 rounded-lg font-semibold text-lg hover:bg-[#0052CC] transition-all duration-300 ease-in-out transform hover:scale-105 shadow-md"
           >
-            Book Appointment
+            Update Appointment
           </button>
         </form>
 
-        <div className="flex justify-between items-center mt-6">
+        <div className="mt-6 text-center">
           <Link
-            to="/"
+            to="/appointments"
             className="text-[#03326F] font-medium hover:underline transition-all duration-300"
           >
-            Back to Home
+            Back to Appointments
           </Link>
-          <button
-            onClick={handleSeeAppointments}
-            className="bg-[#03326f] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#0052CC] transition-all duration-300 ease-in-out shadow-md"
-          >
-            See Appointments
-          </button>
         </div>
       </div>
     </div>
   );
 }
 
-export default AppointmentForm;
+export default AppointmentUpdate;
