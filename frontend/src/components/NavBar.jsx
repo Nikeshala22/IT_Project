@@ -57,7 +57,7 @@ function NavBar() {
             <div className="absolute w-[330px] h-[132px] bg-[#111827] angled-rectangle2 z-20"></div>
 
             <div className="absolute left-[280px] h-[55px] bg-white angled-rectangle3 right-0 flex justify-between items-center">
-                <div className="font-bold text-xl ml-5">
+                <div className="gap-8 ml-[140px] font-bold text-xl ml-5 ">
                     Welcome to Wash & Go Automobile Service Company
                 </div>
 

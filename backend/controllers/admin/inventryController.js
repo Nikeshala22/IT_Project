@@ -51,6 +51,10 @@ const addSparePart = async (req, res) => {
             imageUrl = imageUpload.secure_url;
         }
 
+        if(!imageUrl){
+            return res.status(404).json({success:false,message:"image url is not obtained!"})
+        }
+
         // Construct the data object for the inventory item
         const inventoryData = {
             name,
@@ -66,6 +70,7 @@ const addSparePart = async (req, res) => {
         // Create a new inventory item and save it
         const sparePart = new InventoryModel(inventoryData);
         await sparePart.save();
+        
         res.status(201).json({ success: true, sparePart });
 
     } catch (error) {

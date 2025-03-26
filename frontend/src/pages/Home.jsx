@@ -8,186 +8,131 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import About6 from "../assets/Home/About6.jpg";
 import Hero1 from "../assets/Home/Car2.jpg";
-import Hero2 from "../assets/Home/Car1.jpg";
 import Hero3 from "../assets/Home/Hero3.jpg";
-import About5 from "../assets/Home/About5.jpg";
-import About7 from "../assets/Home/About7.jpg";
 
 function Home() {
     return (
         <>
-            {/* About Section */}
-            <div className="h-screen w-full relative flex justify-center items-center bg-gray-100" id="AboutSection">
-                <div className="h-[80vh] w-[91%] flex mb-[120px] shadow-2xl rounded-xl overflow-hidden">
-                    {/* Left Section with Image */}
-                    <div className="h-full w-1/2 flex justify-center items-center">
-                        <div
-                            style={{ backgroundImage: `url(${About6})` }}
-                            className="bg-cover bg-center w-full h-full transform scale-105 transition-transform duration-700 hover:scale-110"
-                        />
-                    </div>
-
-                    {/* Right Section with Text */}
-                    <div className="h-full w-1/2 flex flex-col justify-center bg-white p-10">
-                        <div className="ml-[10%]">
-                            {/* Heading */}
-                            <div className="w-[40%] text-2xl font-bold flex items-center text-gray-700 tracking-wider mb-3">
-                                <GiAutoRepair className="text-[#eb3301] mx-2" />
-                                <h1>ABOUT US</h1>
-                                <GiAutoRepair className="text-[#eb3301] mx-2" />
-                            </div>
-
-                            {/* Title */}
-                            <div className="text-5xl font-extrabold text-gray-800 leading-tight mb-6">
-                                Dispelling Myths, Delivering Excellence.
-                            </div>
-
-                            {/* Meaningful Description */}
-                            <div className="w-[85%] font-medium text-gray-600 leading-relaxed mb-6">
-                                At our automobile service center, we understand how misconceptions about car repair can hold you back. Our mission is to debunk these myths by providing expert services that keep your vehicle in optimal condition. With a blend of innovation and expertise, we deliver repairs that are both reliable and hassle-free, ensuring your peace of mind.
-                            </div>
-
-                            {/* Feature List */}
-                            <div className="grid grid-cols-2 gap-6 font-semibold text-gray-700">
-                                {[
-                                    "Exceptional Quality.",
-                                    "Unmatched Expertise.",
-                                    "Innovative Solutions.",
-                                    "Customer-Centric Approach.",
-                                    "Industry Leadership.",
-                                    "Sourcing the Best.",
-                                    "Immediate Quality.",
-                                    "Transforming the Ordinary."
-                                ].map((item, index) => (
-                                    <div key={index} className="flex items-center text-lg">
-                                        <IoCheckmarkSharp className="text-[#006AFF] mr-3" />
-                                        <div>{item}</div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Statistics Section */}
-                <div className="h-[15vh] absolute bottom-0 right-0 left-0 w-full bg-[#111827] flex items-center justify-center gap-[5%] text-white py-4 shadow-inner">
-                    {[
-                        { end: 725, suffix: "+", label: "PIONEER THROUGHS" },
-                        { end: 129, suffix: "+", label: "CLIENT EXPECTATIONS" },
-                        { end: 66000, separator: ",", label: "DELIVERED PROMISES" },
-                        { end: 63000, separator: ",", label: "COMPANY AWARDS" },
-                    ].map((item, index) => (
-                        <div key={index} className="w-[210px] text-center">
-                            <div className="text-6xl font-extrabold text-[#54E2EB]">
-                                <CountUp end={item.end} duration={2} separator={item.separator} suffix={item.suffix} />
-                            </div>
-                            <div className="text-lg font-semibold mt-2">{item.label}</div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
             {/* Hero Section */}
-            <div className="relative w-full h-full min-h-[75vh] overflow-hidden " id="HeroSection">
-                <Carousel
-                    showThumbs={false}
-                    autoPlay
-                    infiniteLoop
-                    interval={5000}
-                    showArrows={false}
-                    showStatus={false}
-                >
-                    {[
-                        {
-                            title: "NON STOP CAR SERVICES CENTER",
-                            subtitle: "Get Your Car Solution",
-                            description: "Take Payments online with a scalable platform that grows your perfect business",
-                            buttonText: "GET AN APPOINTMENT",
-                            backgroundImage: Hero1,
-                        },
-                        {
-                            title: "EXPERT CAR REPAIRS",
-                            subtitle: "Quality Service You Can Trust",
-                            description: "Our experienced technicians ensure your vehicle is in top condition.",
-                            buttonText: "BOOK NOW",
-                            backgroundImage: Hero3,
-                        },
-                    ].map((slide, index) => (
-                        <div key={index}>
-                            <div
-                                className="relative w-full h-full"
-                                style={{
-                                    backgroundImage: `url(${slide.backgroundImage})`,
-                                    backgroundRepeat: "no-repeat",
-                                    backgroundPosition: "center",
-                                    backgroundSize: "cover",
-                                    minHeight: "76vh",
-                                }}
-                            >
-                                <div className="absolute inset-0 bg-black opacity-50"></div>
-                                <div className="relative z-10 max-w-[750px] text-white flex flex-col text-start p-8">
-                                    <h4 className="mt-[15%] font-bold text-xl">{slide.title}</h4>
-                                    <h1 className="text-6xl font-bold mt-4">
-                                        {slide.subtitle}{" "}
-                                        <span className="text-[#0BEEFD]">Amazing</span>
-                                    </h1>
-                                    <p className="mt-4 text-lg md:text-xl">{slide.description}</p>
-                                    <Link to="/appointment">
-                                        <button className="bg-transparent hover:bg-[#006AFF] px-4 py-3 text-xl text-[#006AFF] hover:text-white border-2 font-bold border-[#006AFF] rounded-md shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out mt-4 w-[30%]">
-                                            {slide.buttonText}
-                                        </button>
-                                    </Link>
-                                </div>
+            <div className="relative w-full h-screen overflow-hidden" id="HeroSection">
+                <Carousel showThumbs={false} autoPlay infiniteLoop interval={5000} showArrows={false} showStatus={false}>
+                    {[{
+                        title: "NON STOP CAR SERVICES CENTER",
+                        subtitle: "Get Your Car Solution",
+                        description: "Take Payments online with a scalable platform that grows your business",
+                        buttonText: "GET AN APPOINTMENT",
+                        backgroundImage: Hero1,
+                    }, {
+                        title: "EXPERT CAR REPAIRS",
+                        subtitle: "Quality Service You Can Trust",
+                        description: "Our experienced technicians ensure your vehicle is in top condition.",
+                        buttonText: "BOOK NOW",
+                        backgroundImage: Hero3,
+                    }].map((slide, index) => (
+                        <div key={index} className="relative w-full h-screen bg-cover bg-center flex items-center justify-center" style={{ backgroundImage: `url(${slide.backgroundImage})` }}>
+                            <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent"></div>
+                            <div className="relative z-10 text-white text-center p-8">
+                                <h4 className="text-xl font-bold uppercase text-yellow-400">{slide.title}</h4>
+                                <h1 className="text-5xl font-bold mt-4 text-blue-300">{slide.subtitle} <span className="text-yellow-500">Amazing</span></h1>
+                                <p className="mt-4 text-lg text-gray-200">{slide.description}</p>
+                                <Link to="/appointment">
+                                    <button className="mt-6 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 px-6 py-3 text-lg font-bold text-white rounded-lg shadow-xl transition-all duration-300">
+                                        {slide.buttonText}
+                                    </button>
+                                </Link>
                             </div>
                         </div>
                     ))}
                 </Carousel>
             </div>
-
-            {/* Package Section */}
-            <div className="w-full h-[100vh] p-5 bg-gray-100 flex flex-col" id="PackageSection">
-                <div className="w-full md:w-[95%] mx-auto flex-1 flex flex-col md:flex-row justify-between">
-                    {/* Service Cards */}
-                    <div className="w-full md:w-[48%] mb-6 md:mb-0 rounded-lg overflow-hidden flex-grow">
-                        <div className="grid h-full grid-cols-1 gap-4 p-4 md:grid-cols-2">
-                            {[
-                                {
-                                    title: "Nano Treatments",
-                                    description: "Nanotechnology enhances surface durability by filling microscopic holes with a repelling agent, creating a waterproof barrier that resists water, UV rays, and harmful chemicals.",
-                                    features: ["RESISTANCE", "DURABILITY", "EFFECT"],
-                                },
-                                {
-                                    title: "ENGINE TUNE-UPS",
-                                    description: "Engine tune-ups improve efficiency, reduce emissions, and extend vehicle life by inspecting components like spark plugs, oil filters, and optimizing overall engine performance.",
-                                    features: ["Intake Manifold De-carbonizing", "Spark Plug Check & inspection", "Ignition Coil Inspection"],
-                                },
-                                {
-                                    title: "LUBE SERVICES",
-                                    description: "Car lubrication services involve replacing oils, inspecting the lubrication system, and ensuring functionality to keep the engine healthy, efficient, and safe, including oil changes.",
-                                    features: ["Inspections of the oil tank", "Fluid change", "New oil filter"],
-                                },
-                                {
-                                    title: "Wheel Alignment",
-                                    description: "Proper wheel alignment ensures even tyre wear and optimal performance. Modern four-wheel alignment is necessary for today's vehicles, including both front and rear-wheel drives.",
-                                    features: ["Safe, predictable vehicle control", "Improved fuel efficiency", "Smooth and comfortable ride"],
-                                },
-                            ].map((service, index) => (
-                                <div key={index} className="p-4 transition-transform duration-300 ease-in-out border rounded-lg shadow-lg bg-gradient-to-r from-[#fefbfb] via-[#f5f5f5] to-[#e1e1e1] hover:scale-95">
-                                    <h1 className="text-xl md:text-2xl font-bold text-center text-[#006AFF]">{service.title}</h1>
-                                    <div className="p-2">
-                                        <div className="font-semibold text-gray-800">{service.description}</div>
-                                        <ul className="mt-2 font-bold text-gray-800">
-                                            {service.features.map((feature, idx) => (
-                                                <li key={idx} className="flex items-center text-gray-700 mt-2">
-                                                    <AiTwotoneThunderbolt className="text-[#006AFF] mr-2" />
-                                                    {feature}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            ))}
+ {/* About Section */}
+ <div className="w-full bg-gradient-to-r from-red-500 to-yellow-500 py-16 text-white" id="AboutSection">
+                <div className="container mx-auto flex flex-wrap lg:flex-nowrap items-center">
+                    <div className="w-full lg:w-1/2 p-6">
+                        <img src={About6} alt="About Us" className="rounded-lg shadow-lg" />
+                    </div>
+                    <div className="w-full lg:w-1/2 p-6">
+                        <h2 className="text-4xl font-bold flex items-center">
+                            <GiAutoRepair className="text-black mr-2" /> ABOUT US <GiAutoRepair className="text-black ml-2" />
+                        </h2>
+                        <p className="text-lg mt-4 leading-relaxed">We are a premier car service center dedicated to providing top-quality maintenance and repair services. With state-of-the-art equipment and a team of highly skilled technicians, we ensure your vehicle gets the best care possible.</p>
+                        <p className="mt-4 text-lg">Our mission is to keep your vehicle running smoothly, safely, and efficiently. We offer a range of services from routine maintenance to advanced diagnostics and repairs.</p>
+                        <p className="mt-4 text-lg">Customer satisfaction is our top priority. We value transparency, efficiency, and excellence in every service we provide.</p>
+                        <div className="mt-6 flex gap-4">
+                            
+                            <Link to="/contact">
+                                <button className="bg-green-500 hover:bg-green-700 px-6 py-3 text-lg font-bold rounded-lg shadow-lg transition-all">Read More..</button>
+                            </Link>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Services Section */}
+            <div className="w-full bg-gradient-to-r from-gray-100 to-gray-300 py-16" id="ServicesSection">
+                <div className="container mx-auto text-center">
+                    <h2 className="text-4xl font-bold text-gray-900">Our Services</h2>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-10">
+                        {[{
+                            title: "Nano Treatments",
+                            description: "Enhances surface durability with waterproof protection.",
+                        }, {
+                            title: "Engine Tune-Ups",
+                            description: "Improves efficiency, reduces emissions, and extends vehicle life.",
+                        }, {
+                            title: "Lube Services",
+                            description: "Ensures smooth engine performance with quality lubrication.",
+                        }, {
+                            title: "Wheel Alignment",
+                            description: "Optimizes tyre wear and vehicle control.",
+                        }].map((service, index) => (
+                            <div key={index} className="p-6 bg-white border rounded-lg shadow-xl transform hover:scale-105 transition-all duration-300">
+                                <h3 className="text-xl font-semibold text-blue-600">{service.title}</h3>
+                                <p className="text-gray-600 mt-2">{service.description}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Static Statistics Section */}
+            <div className="w-full bg-gradient-to-r from-purple-600 to-blue-500 py-16 text-white" id="StatisticsSection">
+                <div className="container mx-auto text-center">
+                    <h2 className="text-4xl font-bold">Our Achievements</h2>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-10">
+                        {[{
+                            title: "Happy Customers",
+                            value: 12000,
+                        }, {
+                            title: "Cars Repaired",
+                            value: 5000,
+                        }, {
+                            title: "Years of Experience",
+                            value: 15,
+                        }, {
+                            title: "Expert Technicians",
+                            value: 50,
+                        }].map((stat, index) => (
+                            <div key={index} className="p-6 bg-white bg-opacity-20 backdrop-blur-lg rounded-lg shadow-lg">
+                                <h3 className="text-5xl font-bold text-yellow-300">
+                                    <CountUp end={stat.value} duration={3} />+
+                                </h3>
+                                <p className="text-lg mt-2 text-red-900">{stat.title}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Contact Section */}
+            <div className="w-full bg-gray-900 text-white py-16" id="ContactSection">
+                <div className="container mx-auto text-center">
+                    <h2 className="text-4xl font-bold">Get In Touch</h2>
+                    <p className="text-gray-400 mt-4">We're here to help. Contact us today for any inquiries.</p>
+                    <div className="mt-8">
+                        <Link to="/contact">
+                            <button className="px-6 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-all">Contact Us</button>
+                        </Link>
                     </div>
                 </div>
             </div>

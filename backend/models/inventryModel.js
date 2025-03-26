@@ -36,7 +36,7 @@ const InventorySchema = new Schema({
         required: true,
         trim: true
     },
-    images: { 
+    image: { 
         type:String,
     }
 }, { timestamps: true });

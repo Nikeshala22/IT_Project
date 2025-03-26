@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from '../assets/Home/Logo3.webp'; // Import logo from src/assets
 import {
     FaDribbbleSquare,
     FaFacebookSquare,
@@ -16,7 +17,7 @@ const Footer = () => {
             <div className='relative z-10 grid gap-8 md:grid-cols-3'>
                 <div className='flex flex-col items-center text-center'>
                     <div className='relative mb-4'>
-                        <img src="Logo3.png" alt="Logo" className='h-[120px] w-auto rounded-lg shadow-lg' />
+                        <img src={logo} alt="Logo" className=" w-[250px]  h-[130px] bg-cover bg-center w-auto rounded-lg shadow-lg" /> {/* Using the imported logo */}
                         <div className='absolute inset-0 bg-gradient-to-r from-[#006AFF] to-[#00BFFF] opacity-20 rounded-lg' />
                     </div>
                     <p className='py-4 text-base md:text-lg text-gray-400 leading-relaxed'>
