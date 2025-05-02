@@ -6,6 +6,7 @@ import Footer from './components/Footer'; // Import Footer
 import SpareParts from './pages/spareParts/SpareParts';
 
 
+
 function App() {
   
   return ( 
@@ -15,7 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} /> {/* Home route */}
         <Route path="/spareparts" element={<SpareParts />} /> {/* SpareParts route */}
-        
+        {/* <Route path="/services" element={<services />} />  */}
       </Routes>
       <Footer /> {/* Add Footer here */}
     </div>

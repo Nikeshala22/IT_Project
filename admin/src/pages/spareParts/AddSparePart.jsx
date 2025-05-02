@@ -41,9 +41,9 @@ const AddSparePart = () => {
       formData.append('dimensions.height', dimensions.height)
 
       const result = await addSparePart(formData)
-      
+
       if (result?.success) {
-        toast.success('Spare Part Added Successfully!')
+
         setPartImg(false)
         setName('')
         setBrand('')
@@ -53,7 +53,7 @@ const AddSparePart = () => {
         setColor('#000000')
         setDimensions({ length: '', width: '', height: '' })
       }
-      
+
     } catch (error) {
       toast.error(error.message)
       console.log(error)
@@ -69,147 +69,174 @@ const AddSparePart = () => {
 
   return (
     <form onSubmit={onSubmitHandler} className="w-full m-5">
-      <p className="mb-3 text-lg font-medium">Add Spare Part</p>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Add New Spare Part</h2>
+        <p className="text-gray-500 text-sm">Please fill in all required fields (*)</p>
+      </div>
 
-      <div className="bg-white px-8 py-8 border rounded w-full max-w-4xl max-h-[80vh] overflow-y-scroll">
-        <div className="flex items-center gap-4 mb-8 text-gray-500">
-          <label htmlFor="part-img">
-            <img 
-              src={partImg ? URL.createObjectURL(partImg) : assets.upload_area} 
-              alt="" 
-              className="w-16 bg-gray-100 rounded-full cursor-pointer" 
+      <div className="bg-white px-8 py-8 border rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto shadow-sm">
+        <div className="flex items-center gap-4 mb-8">
+          <label
+            htmlFor="part-img"
+            className={`cursor-pointer group relative ${!partImg ? 'p-2 border-2 border-dashed rounded-lg hover:border-blue-600' : ''}`}
+          >
+            <img
+              src={partImg ? URL.createObjectURL(partImg) : assets.upload_area}
+              alt="Part preview"
+              className={`w-32 h-32 object-contain ${!partImg ? 'opacity-50 group-hover:opacity-70' : ''}`}
             />
+            {!partImg && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-sm font-medium text-gray-500">Click to upload</span>
+                <span className="text-xs text-gray-400">PNG, JPG up to 2MB</span>
+              </div>
+            )}
           </label>
-          <input 
-            onChange={(e) => setPartImg(e.target.files[0])} 
-            type="file" 
-            id="part-img" 
-            hidden 
+          <input
+            onChange={(e) => setPartImg(e.target.files[0])}
+            type="file"
+            id="part-img"
+            className="hidden"
+            accept="image/png, image/jpeg"
           />
-          <p>Upload Spare Part Image</p>
+          {partImg && (
+            <button
+              type="button"
+              onClick={() => setPartImg(null)}
+              className="text-sm text-red-600 hover:text-red-700"
+            >
+              Remove Image
+            </button>
+          )}
         </div>
 
-        <div className="flex flex-col items-start gap-10 text-gray-600 lg:flex-row">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
-          <div className="flex flex-col w-full gap-4 lg:flex-1">
-            <div className="flex flex-col gap-1">
-              <p>Part Name</p>
-              <input 
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Part Name *
+              </label>
+              <input
                 value={name}
-                onChange={(e) => setName(e.target.value)} 
-                type="text" 
-                placeholder="Name" 
-                className="px-3 py-2 border rounded" 
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+                placeholder="Enter part name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
                 required
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <p>Brand</p>
-              <input 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Brand *
+              </label>
+              <input
                 value={brand}
-                onChange={(e) => setBrand(e.target.value)} 
-                type="text" 
-                placeholder="Brand" 
-                className="px-3 py-2 border rounded" 
+                onChange={(e) => setBrand(e.target.value)}
+                type="text"
+                placeholder="Enter brand name"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
                 required
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <p>Model Number</p>
-              <input 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Model Number *
+              </label>
+              <input
                 value={modelNumber}
-                onChange={(e) => setModelNumber(e.target.value)} 
-                type="text" 
-                placeholder="Model Number" 
-                className="px-3 py-2 border rounded" 
+                onChange={(e) => setModelNumber(e.target.value)}
+                type="text"
+                placeholder="Enter model number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-col gap-1">
-                <p>Length (cm)</p>
-                <input 
-                  value={dimensions.length}
-                  onChange={(e) => handleDimensionChange('length', e.target.value)}
-                  type="number" 
-                  step="0.01" 
-                  className="px-3 py-2 border rounded" 
-                  required
-                />
+            <fieldset className="border border-gray-200 p-4 rounded-lg">
+              <legend className="text-sm font-medium text-gray-700 px-2">Dimensions (cm) *</legend>
+              <div className="grid grid-cols-3 gap-4">
+                {['length', 'width', 'height'].map((dimension) => (
+                  <div key={dimension}>
+                    <label className="block text-xs text-gray-500 mb-1 capitalize">
+                      {dimension}
+                    </label>
+                    <input
+                      value={dimensions[dimension]}
+                      onChange={(e) => handleDimensionChange(dimension, e.target.value)}
+                      type="number"
+                      step="0.01"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                      required
+                    />
+                  </div>
+                ))}
               </div>
-              <div className="flex flex-col gap-1">
-                <p>Width (cm)</p>
-                <input 
-                  value={dimensions.width}
-                  onChange={(e) => handleDimensionChange('width', e.target.value)}
-                  type="number" 
-                  step="0.01" 
-                  className="px-3 py-2 border rounded" 
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <p>Height (cm)</p>
-                <input 
-                  value={dimensions.height}
-                  onChange={(e) => handleDimensionChange('height', e.target.value)}
-                  type="number" 
-                  step="0.01" 
-                  className="px-3 py-2 border rounded" 
-                  required
-                />
-              </div>
-            </div>
+            </fieldset>
           </div>
 
           {/* Right Column */}
-          <div className="flex flex-col w-full gap-4 lg:flex-1">
-            <div className="flex flex-col gap-1">
-              <p>Quantity</p>
-              <input 
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Quantity *
+              </label>
+              <input
                 value={quantity}
-                onChange={(e) => setQuantity(e.target.value)} 
-                type="number" 
-                placeholder="Quantity" 
-                className="px-3 py-2 border rounded" 
+                onChange={(e) => setQuantity(e.target.value)}
+                type="number"
+                placeholder="Enter quantity"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                min="0"
                 required
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <p>Price ($)</p>
-              <input 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Price ($) *
+              </label>
+              <input
                 value={price}
-                onChange={(e) => setPrice(e.target.value)} 
-                type="number" 
-                step="0.01" 
-                placeholder="Price" 
-                className="px-3 py-2 border rounded" 
+                onChange={(e) => setPrice(e.target.value)}
+                type="number"
+                step="0.01"
+                placeholder="Enter price"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                min="0"
                 required
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <p>Color</p>
-              <input 
-                type="color" 
-                value={color}
-                onChange={(e) => setColor(e.target.value)} 
-                className="w-full h-10 px-1 border rounded" 
-              />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Color *
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="w-12 h-12 border border-gray-300 rounded-md cursor-pointer"
+                />
+                <span className="text-sm text-gray-500">
+                  Selected: {color.toUpperCase()}
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        <button 
-          type="submit" 
-          className="px-10 py-3 mt-4 text-white rounded-full bg-primary"
-        >
-          Add Spare Part
-        </button>
+        <div className="mt-8 flex justify-end">
+          <button
+            type="submit"
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors shadow-sm focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+          >
+            Add Spare Part
+          </button>
+        </div>
       </div>
     </form>
   );

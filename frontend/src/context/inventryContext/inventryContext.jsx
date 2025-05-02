@@ -9,14 +9,14 @@ const InventoryContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [spareParts, setSpareParts] = useState([]);
-
+  
   const getSparePartsData = async () => {
     try {
       const { data } = await axios.get(
         backendUrl + "/api/inventory/get-all-spareparts"
       );
-      // Since the API returns the spare parts array directly, we set it directly.
-      setSpareParts(data);
+      // Access the spareParts array from the response
+      setSpareParts(data.spareParts); // Changed from data to data.spareParts
     } catch (error) {
       console.error(error);
       toast.error(error.message);
