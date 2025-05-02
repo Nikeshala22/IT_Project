@@ -131,7 +131,7 @@ function NavBar() {
                             RECOVERY
                         </li>
                     </Link>
-                    <Link to="/spare">
+                    <Link to="/spareparts">
                         <li className="hover:text-[#006AFF] transition duration-200 cursor-pointer">
                             STORE
                         </li>

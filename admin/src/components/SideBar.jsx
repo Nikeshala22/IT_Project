@@ -1,44 +1,37 @@
-import React from "react";
-import logo from '../assets/Logo3.webp'; 
+import React from 'react'
+import { NavLink } from 'react-router-dom'
+import { assets } from '../assets/assets'
 
+const SideBar = () => {
+    return (
+        <div className='min-h-screen bg-white border-r'>
+            <ul className='text-[#515151] mt-5'>
+                {/* <NavLink to={'/inventory-dashboard'} className={({isActive}) => 
+                    `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                        isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''
+                    }`}>
+                    <img src={assets.home_icon} alt="Dashboard" />
+                    <p>Dashboard</p>
+                </NavLink>
 
-export default function SideBar() {
-  return (
-    <aside>
-      <aside className="h-full w-64 bg-gray-900 text-white hidden md:block">
-        <div className="p-4 flex items-center">
-          <img src={logo} alt="Logo" className="h-32 w-auto mt-5 mx-auto rounded-full" />
+                <NavLink to={'/all-spare-parts'} className={({isActive}) => 
+                    `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                        isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''
+                    }`}>
+                    <img src={assets.list_icon} alt="All Parts" />
+                    <p>All Spare Parts</p>
+                </NavLink> */}
+
+                <NavLink to={'/add-spare-part'} className={({isActive}) => 
+                    `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
+                        isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''
+                    }`}>
+                    <img src={assets.add_icon} alt="Add Part" />
+                    <p>Add Spare Part</p>
+                </NavLink>
+            </ul>
         </div>
-        <nav className="mt-8">
-          <ul className="space-y-5 font-bold text-xl text-center">
-
-            <li className="px-4 py-3 hover:bg-gray-700 hover:duration-300">
-              <SideNavLinks linkName="DASHBOARD" url="/dashboard" />
-            </li>
-            <li className="px-4 py-3 hover:bg-gray-700 hover:duration-300">
-              <SideNavLinks linkName="CUSTOMER DETAILS" url="/cus_details" />
-            </li>
-            <li className="px-4 py-3 hover:bg-gray-700 hover:duration-300">
-              <SideNavLinks linkName="PACKAGES" url="/dash_packages" />
-            </li>
-            <li className="px-4 py-3 hover:bg-gray-700 hover:duration-300">
-              <SideNavLinks linkName="INVENTORY" url="/StoreDashboard" />
-            </li>
-            <li className="px-4 py-3 hover:bg-gray-700 hover:duration-300">
-              <SideNavLinks linkName="RECOVERY" url="/Dashboard/recoveryDash" />
-            </li>
-            <li className="px-4 py-3 hover:bg-gray-700 hover:duration-300">
-              <SideNavLinks linkName="RESERVATIONS" url="/reservation" />
-            </li>
-            <li className="px-4 py-3 hover:bg-gray-700 hover:duration-300">
-              <SideNavLinks linkName="OFFERS" url="/offers_dash" />
-            </li>
-            <li className="px-4 py-3 hover:bg-gray-700 hover:duration-300">
-              <SideNavLinks linkName="REFERRALS" url="/referrals_dash" />
-            </li>
-          </ul>
-        </nav>
-      </aside>
-    </aside>
-  );
+    )
 }
+
+export default SideBar

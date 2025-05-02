@@ -1,7 +1,7 @@
 import InventoryModel from "../../models/inventryModel.js";
 import { v2 as cloudinary } from 'cloudinary'
 
-// 🟢 Get all spare parts
+//Get all spare parts
 const getAllSpareParts = async (req, res) => {
     try {
         const spareParts = await InventoryModel.find();
@@ -11,7 +11,7 @@ const getAllSpareParts = async (req, res) => {
     }
 };
 
-// 🟢 Get a single spare part by ID
+//Get a single spare part by ID
 const getSparePartById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -79,7 +79,7 @@ const addSparePart = async (req, res) => {
 };
 
 
-// 🟢 Update a spare part
+//Update a spare part
 const updateSparePart = async (req, res) => {
     try {
         const { id } = req.params;
@@ -129,7 +129,7 @@ const updateSparePart = async (req, res) => {
     }
 };
 
-// 🟢 Delete a spare part
+//Delete a spare part
 const deleteSparePart = async (req, res) => {
     try {
         const { id } = req.params;

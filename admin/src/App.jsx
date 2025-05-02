@@ -1,41 +1,34 @@
-import React, { useContext } from "react";
-import { Routes, Route } from 'react-router-dom';
-import SparePartsDashboard from "./pages/dashBoard/sparePartsDashBoard";
-import AddSpareParts from "./pages/spareParts/addSpareParts";
-import UpdateSpareParts from "./pages/spareParts/updateSpareParts";
-import DeleteSpareParts from "./pages/spareParts/DeleteSpareParts";
-import SideNavBar from "./components/Navbar";
-import { SparePartsContext } from "./context/adminSparePartsContext/sparePartsContext.jsx";
-
+import React from 'react'
+import { ToastContainer } from 'react-toastify'
+import { Routes, Route } from 'react-router-dom'
+import NavBar from './Components/NavBar'
+import SideBar from './Components/SideBar'
+import AddSparePart from './pages/spareParts/AddSparePart'
+import 'react-toastify/dist/ReactToastify.css'
 
 const App = () => {
-
-  // Use context to access the state
-  const { aToken } = useContext(SparePartsContext);
- 
-  return aToken ? (
-    <div className='bg-[#F8F9FD]'>
-      <ToastContainer/>
-      <SideNavBar/>
+  return (
+    <div className='bg-[#F8F9FD] min-h-screen'>
+      <ToastContainer />
+      <NavBar />
       <div className='flex items-start'>
-        <SideBar/> 
-        <Routes>
-           {/*--------Admin Route-------- */}
-          <Route path='/' element={<></>}/>
-          <Route path='/admin-dashboard' element={<SparePartsDashboard/>}/>
-          <Route path='/all-appointments' element={<AddSpareParts/>}/>
-          <Route path='/add-spareparts' element={<AddSpareParts/>}/>
-          <Route path='/update-spareparts' element={<UpdateSpareParts/>}/>
-          <Route path='/delete-spareparts' element={<DeleteSpareParts/>}/>
-        </Routes>
+        <SideBar />
+        <main className='flex-1 p-8'>
+          <Routes>
+            {/* Inventory Routes */}
+            {/* <Route path='/' element={<Dashboard />} /> */}
+            {/* <Route path='/inventory-dashboard' element={<Dashboard />} />
+            <Route path='/all-spare-parts' element={<AllSpareParts />} /> */}
+            <Route path='/add-spare-part' element={<AddSparePart />} />
+
+            {/* Additional Routes */}
+            {/* <Route path='/packages' element={<div>Packages Management</div>} />
+            <Route path='/users' element={<div>User Management</div>} /> */}
+          </Routes>
+        </main>
       </div>
     </div>
-  ) : (
-    <>  
-      <Login/>
-      <ToastContainer/>
-    </>
-  );
-};
+  )
+}
 
 export default App
