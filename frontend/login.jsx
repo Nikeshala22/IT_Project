@@ -2,9 +2,10 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { AppContent } from './context/AppContex';
 import { GiAutoRepair } from 'react-icons/gi';
-import Hero1 from '../assets/Home/Car2.jpg';
+import { AppContent } from './src/context/inventryContext/AppContex';
+
+
 
 const Login = () => {
   const [state, setState] = useState('Sign Up');
@@ -43,6 +44,13 @@ const Login = () => {
       try {
         axios.defaults.withCredentials = true;
 
+        console.log(`Attempt ${attempt} - Sending request to: ${backendurl}/api/auth/${state === 'Sign Up' ? 'register' : 'login'}`);
+        console.log('Request payload:', {
+          email: formData.email,
+          password: formData.password,
+          ...(state === 'Sign Up' && { name: formData.name }),
+        });
+
         if (state === 'Sign Up') {
           const { data } = await axios.post(`${backendurl}/api/auth/register`, {
             name: formData.name,
@@ -51,10 +59,9 @@ const Login = () => {
           });
 
           if (data.success) {
-            toast.success('Account created successfully!');
-            setUserData({ name: formData.name, email: formData.email, role: 'user' });
-            setIsLoggedin(true);
-            navigate('/user/');
+            toast.success('Account created successfully! Please log in.');
+            setState('Login');
+            setFormData({ name: '', email: '', password: '' });
             return;
           } else {
             toast.error(data.message || 'Signup failed');
@@ -67,19 +74,14 @@ const Login = () => {
           });
 
           if (data.success) {
+            if (data.user.role === 'admin') {
+              toast.error('Invalid credentials');
+              return;
+            }
             toast.success('Logged in successfully!');
             setUserData(data.user);
             setIsLoggedin(true);
-            switch (data.user.role) {
-              case 'admin':
-                navigate('/admin');
-                break;
-              case 'user':
-                navigate('/user/');
-                break;
-              default:
-                navigate('/user/');
-            }
+            navigate('/');
             return;
           } else {
             toast.error(data.message || 'Login failed');
@@ -109,30 +111,22 @@ const Login = () => {
   return (
     <div
       className="relative flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 bg-cover bg-center"
-      style={{ backgroundImage: `url(${Hero1})` }}
+      style={{ backgroundImage: `url($)` }}
     >
-      {/* Background Overlay */}
       <div className="absolute inset-0 bg-black/50 z-0"></div>
-
-      {/* Logo */}
       <div className="absolute top-8 left-8 sm:top-10 sm:left-12 flex items-center text-white text-2xl font-bold tracking-wider z-20 cursor-pointer">
         <GiAutoRepair className="text-[#006AFF] mx-2" />
         MOTRONE
       </div>
-
-      {/* Form Card */}
       <div className="relative w-full max-w-md p-8 bg-white rounded-xl shadow-2xl hover:shadow-[0_10px_20px_rgba(0,106,255,0.3)] transition-shadow duration-300 z-10">
         <div className="text-center mb-8">
           <h2 className="text-4xl font-extrabold text-gray-800 tracking-wide">
             {state === 'Sign Up' ? 'Create Account' : 'Welcome Back'}
           </h2>
           <p className="mt-4 text-gray-600 text-base font-semibold">
-            {state === 'Sign Up'
-              ? 'Join MOTRONE for top-notch vehicle services'
-              : 'Login to access your account'}
+            {state === 'Sign Up' ? 'Join MOTRONE for top-notch vehicle services' : 'Login to access your account'}
           </p>
         </div>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           {state === 'Sign Up' && (
             <div className="relative">
