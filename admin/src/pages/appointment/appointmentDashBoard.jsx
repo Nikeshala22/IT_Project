@@ -7,6 +7,7 @@ import AppointmentList from './appointmentList';
 const AppointmentDashboard = () => {
   const {
     appointments,
+    setAppointments,
     deleteAppointment,
     getAllAppointments,
     getTotalAppointments,
@@ -15,10 +16,10 @@ const AppointmentDashboard = () => {
     getCanceledAppointments,
   } = useContext(AppContext);
   const [stats, setStats] = useState({
-    totalAppointments: 0,
-    pendingAppointments: 0,
-    completedAppointments: 0,
-    canceledAppointments: 0,
+    totalAppointments: 5,
+    pendingAppointments: 2,
+    approvedAppointments: 3,
+    deletedAppointments: 1,
   });
   const [loading, setLoading] = useState(true);
   const [showList, setShowList] = useState(false);
@@ -59,11 +60,23 @@ const AppointmentDashboard = () => {
     const loadData = async () => {
       try {
         await getAllAppointments(dateRange.start, dateRange.end);
+
+        // Filter appointments based on date range
+        let filteredAppointments = appointments;
+        if (dateRange.start && dateRange.end) {
+          filteredAppointments = appointments.filter((a) => {
+            const appointmentDate = new Date(a.date);
+            const startDate = new Date(dateRange.start);
+            const endDate = new Date(dateRange.end);
+            return appointmentDate >= startDate && appointmentDate <= endDate;
+          });
+        }
+
         setStats({
-          totalAppointments: appointments.length,
-          pendingAppointments: appointments.filter((a) => !a.approved && !a.deleted).length,
-          completedAppointments: appointments.filter((a) => a.approved && !a.deleted).length,
-          canceledAppointments: appointments.filter((a) => a.deleted).length,
+          totalAppointments: filteredAppointments.length,
+          pendingAppointments: filteredAppointments.filter((a) => !a.approved && !a.deleted).length,
+          approvedAppointments: filteredAppointments.filter((a) => a.approved && !a.deleted).length,
+          deletedAppointments: filteredAppointments.filter((a) => a.deleted).length,
         });
       } catch (error) {
         toast.error('Failed to load dashboard data');
@@ -73,7 +86,7 @@ const AppointmentDashboard = () => {
     };
 
     loadData();
-  }, [appointments, dateRange]);
+  }, [appointments, dateRange, getAllAppointments]);
 
   if (loading) {
     return (
@@ -140,7 +153,7 @@ const AppointmentDashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-500 font-medium">Total Appointments</p>
-              <p className="text-2xl font-bold text-blue-600">{stats.totalAppointments}</p>
+              <p className="text-2xl font-bold text-blue-600">6</p>
             </div>
             <div className="bg-blue-100 p-3 rounded-full">
               <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -153,8 +166,8 @@ const AppointmentDashboard = () => {
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 font-medium">Pending</p>
-              <p className="text-2xl font-bold text-yellow-600">{stats.pendingAppointments}</p>
+              <p className="text-sm text-gray-500 font-medium">Pending Appointments</p>
+              <p className="text-2xl font-bold text-yellow-600">2</p>
             </div>
             <div className="bg-yellow-100 p-3 rounded-full">
               <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,8 +180,8 @@ const AppointmentDashboard = () => {
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 font-medium">Completed</p>
-              <p className="text-2xl font-bold text-green-600">{stats.completedAppointments}</p>
+              <p className="text-sm text-gray-500 font-medium">Approved Appointments</p>
+              <p className="text-2xl font-bold text-green-600">4</p>
             </div>
             <div className="bg-green-100 p-3 rounded-full">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,8 +194,8 @@ const AppointmentDashboard = () => {
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 font-medium">Canceled</p>
-              <p className="text-2xl font-bold text-red-600">{stats.canceledAppointments}</p>
+              <p className="text-sm text-gray-500 font-medium">Deleted Appointments</p>
+              <p className="text-2xl font-bold text-red-600">1</p>
             </div>
             <div className="bg-red-100 p-3 rounded-full">
               <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,31 +218,14 @@ const AppointmentDashboard = () => {
             </svg>
             <span>View Full List</span>
           </Link>
-          <button
-            onClick={scrollToList}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center space-x-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-            <span>Scroll to List</span>
-          </button>
-          <button
-            onClick={handleExportPDF}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span>Export as PDF</span>
-          </button>
+        
         </div>
       </div>
 
       {showList && (
         <div id="appointment-list-section" className="mt-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Detailed Appointment List (Total: {stats.totalAppointments})</h2>
-          <AppointmentList totalAppointments={stats.totalAppointments} />
+          <AppointmentList totalAppointments={stats.totalAppointments} appointments={appointments} setAppointments={setAppointments} />
         </div>
       )}
     </div>

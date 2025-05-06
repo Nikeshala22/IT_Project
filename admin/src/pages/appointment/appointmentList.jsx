@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-function AppointmentList({ totalAppointments }) {
+function AppointmentList() {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
@@ -11,6 +11,7 @@ function AppointmentList({ totalAppointments }) {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Fetch appointments from the API
   const fetchAppointments = async () => {
     try {
       setLoading(true);
@@ -40,6 +41,7 @@ function AppointmentList({ totalAppointments }) {
     fetchAppointments();
   }, []);
 
+  // Handle search input change
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -54,6 +56,7 @@ function AppointmentList({ totalAppointments }) {
     }
   };
 
+  // Handle Delete Appointment
   const handleDelete = async (appointmentId) => {
     if (!window.confirm('Are you sure you want to delete this appointment?')) return;
 
@@ -75,10 +78,12 @@ function AppointmentList({ totalAppointments }) {
     }
   };
 
+  // Handle Update navigation
   const handleUpdate = (appointmentId) => {
     navigate(`/appointment-update/${appointmentId}`);
   };
 
+  // Handle Approve Appointment
   const handleApprove = async (appointmentId) => {
     try {
       const response = await fetch(`http://localhost:4000/api/appointment/approve-appointment/${appointmentId}`, {
@@ -105,17 +110,21 @@ function AppointmentList({ totalAppointments }) {
     }
   };
 
+  // Generate and download PDF
   const downloadPDF = () => {
     const doc = new jsPDF();
 
+    // Add a header
     doc.setFontSize(20);
     doc.setTextColor(3, 50, 111);
     doc.text('Appointment List', 14, 20);
 
+    // Add a subtitle
     doc.setFontSize(12);
     doc.setTextColor(100);
     doc.text('Generated on: ' + new Date().toLocaleDateString(), 14, 30);
 
+    // Define table columns and data
     const tableColumns = [
       'Appointment ID',
       'Name',
@@ -137,13 +146,24 @@ function AppointmentList({ totalAppointments }) {
       appointment.approved ? 'Approved' : 'Pending'
     ]);
 
+    // Use autoTable directly
     autoTable(doc, {
       head: [tableColumns],
       body: tableRows,
       startY: 40,
-      styles: { fontSize: 10, cellPadding: 3, overflow: 'linebreak' },
-      headStyles: { fillColor: [3, 50, 111], textColor: [255, 255, 255], fontStyle: 'bold' },
-      alternateRowStyles: { fillColor: [240, 240, 240] },
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+        overflow: 'linebreak',
+      },
+      headStyles: {
+        fillColor: [3, 50, 111],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240],
+      },
       columnStyles: {
         0: { cellWidth: 25 },
         1: { cellWidth: 25 },
@@ -157,6 +177,7 @@ function AppointmentList({ totalAppointments }) {
       margin: { top: 40 },
     });
 
+    // Add footer
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
@@ -165,9 +186,11 @@ function AppointmentList({ totalAppointments }) {
       doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 20, doc.internal.pageSize.height - 10, { align: 'right' });
     }
 
+    // Save the PDF
     doc.save('appointment_list.pdf');
   };
 
+  // Handle loading and error states
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -200,7 +223,7 @@ function AppointmentList({ totalAppointments }) {
             <h1 className="text-3xl font-bold text-gray-800">
               Appointment <span className="text-blue-600">List</span>
             </h1>
-            <p className="mt-1 text-sm text-gray-500">View and manage your scheduled appointments (Total: {totalAppointments})</p>
+            <p className="mt-1 text-sm text-gray-500">View and manage your scheduled appointments</p>
           </div>
           <div className="flex space-x-4">
             <Link
@@ -218,6 +241,7 @@ function AppointmentList({ totalAppointments }) {
           </div>
         </div>
 
+        {/* Search Bar */}
         <div className="mb-6">
           <input
             type="text"

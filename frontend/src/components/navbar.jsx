@@ -94,7 +94,7 @@ function NavBar() {
           <Link to="#AboutSection">
             <li className="hover:text-[#006AFF] transition duration-200 cursor-pointer">ABOUT US</li>
           </Link>
-          <Link to="#PackageSection">
+          <Link to="/packages">
             <li className="hover:text-[#006AFF] transition duration-200 cursor-pointer">SERVICE PACKAGES</li>
           </Link>
           <Link to="#Offer">

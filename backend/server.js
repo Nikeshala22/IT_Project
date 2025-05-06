@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 4000;
     await connectCloudinary();
     console.log('✅ Database and Cloudinary connected');
   } catch (err) {
-    console.error('❌ Failed to connect services', err);
+    console.error('❌ Failed to connect services:', err);
     process.exit(1); // Stop server if connection fails
   }
 })();
@@ -33,21 +33,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'http://localhost:5174',
+    origin: 'http://localhost:5173',
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Add PATCH
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Added PATCH
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
-// Log CORS configuration for debugging (fixed origin)
+// Request Logging for Debugging (optional, helps track CORS issues)
 app.use((req, res, next) => {
-  console.log('CORS Headers Set:', {
-    'Access-Control-Allow-Origin': 'http://localhost:5174',
-    'Access-Control-Allow-Credentials': true,
-    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,PATCH,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type,Authorization',
-  });
+  console.log(`📡 Request: ${req.method} ${req.url} from Origin: ${req.get('Origin') || 'N/A'}`);
   next();
 });
 
@@ -63,10 +58,16 @@ app.get('/', (req, res) => {
   res.status(200).json({ success: true, message: '🚀 API working fine' });
 });
 
-// Error Handler
+// Error Handler (Ensure CORS headers for error responses)
 app.use((err, req, res, next) => {
   console.error('🔥 Server Error:', err.stack);
-  res.status(500).json({ success: false, message: 'Something went wrong on the server' });
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.status(500).json({
+    success: false,
+    message: 'Something went wrong on the server',
+    error: err.message, // Include error message for debugging (remove in production)
+  });
 });
 
 // Start Server

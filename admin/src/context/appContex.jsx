@@ -8,17 +8,19 @@ export const AppContextProvider = ({ children }) => {
   // Authentication State
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [userData, setUserData] = useState({});
-  const backendurl = 'http://localhost:4000'; // Default backend URL
+  const [backendurl] = useState('http://localhost:4000'); // Default backend URL
+  const [error, setError] = useState(null);
 
   // Appointment State
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // Appointment Functions
-  const getAllAppointments = async () => {
+  const getAllAppointments = async (start = '', end = '') => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await fetch(`${backendurl}/api/appointment/get-all-appointments`);
+      const response = await fetch(`${backendurl}/api/appointment/get-all-appointments?start=${start}&end=${end}`);
       const result = await response.json();
       if (response.ok) {
         setAppointments(result.appointments || []);
@@ -27,6 +29,7 @@ export const AppContextProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error fetching appointments:', error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -37,7 +40,15 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const getPendingAppointments = async () => {
-    return appointments.filter(a => a.status === 'Pending').length;
+    return appointments.filter((a) => !a.approved && !a.deleted).length;
+  };
+
+  const getApprovedAppointments = async () => {
+    return appointments.filter((a) => a.approved && !a.deleted).length;
+  };
+
+  const getDeletedAppointments = async () => {
+    return appointments.filter((a) => a.deleted).length;
   };
 
   const deleteAppointment = async (id) => {
@@ -47,13 +58,40 @@ export const AppContextProvider = ({ children }) => {
         method: 'DELETE',
       });
       if (response.ok) {
-        setAppointments(appointments.filter(a => a._id !== id));
+        setAppointments(appointments.filter((a) => a._id !== id));
         return true;
       } else {
         throw new Error('Failed to delete appointment');
       }
     } catch (error) {
       console.error('Error deleting appointment:', error);
+      setError(error.message);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const approveAppointment = async (appointmentId) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${backendurl}/api/appointment/approve-appointment/${appointmentId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ approved: true }),
+      });
+      if (response.ok) {
+        const updatedAppointments = appointments.map((a) =>
+          a._id === appointmentId ? { ...a, approved: true } : a
+        );
+        setAppointments(updatedAppointments);
+        return true;
+      } else {
+        throw new Error('Failed to approve appointment');
+      }
+    } catch (error) {
+      console.error('Error approving appointment:', error);
+      setError(error.message);
       return false;
     } finally {
       setLoading(false);
@@ -69,9 +107,7 @@ export const AppContextProvider = ({ children }) => {
       try {
         const response = await fetch(`${backendurl}/api/auth/login`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
         });
 
@@ -88,7 +124,7 @@ export const AppContextProvider = ({ children }) => {
           setIsLoggedin(true);
           setUserData(data.user);
 
-          // Optionally fetch appointments for appointmentadmin
+          // Fetch appointments for appointmentadmin
           if (role === 'appointmentadmin') {
             await getAllAppointments();
           }
@@ -100,6 +136,7 @@ export const AppContextProvider = ({ children }) => {
       } catch (error) {
         console.error(`Attempt ${attempt} - Error:`, error);
         if (error.message === 'Invalid user role' || attempt === maxRetries) {
+          setError(error.message);
           return { success: false, message: error.message };
         }
         if (attempt < maxRetries) {
@@ -107,6 +144,7 @@ export const AppContextProvider = ({ children }) => {
           await new Promise((resolve) => setTimeout(resolve, 1000));
           continue;
         }
+        setError('Network error or max retries exceeded');
         return { success: false, message: 'Network error or max retries exceeded' };
       }
     }
@@ -116,7 +154,8 @@ export const AppContextProvider = ({ children }) => {
   const logout = () => {
     setIsLoggedin(false);
     setUserData({});
-    setAppointments([]); // Optional: Clear appointments on logout
+    setAppointments([]);
+    setError(null);
   };
 
   return (
@@ -128,13 +167,18 @@ export const AppContextProvider = ({ children }) => {
         setUserData,
         backendurl,
         appointments,
+        setAppointments,
         deleteAppointment,
         getTotalAppointments,
         getPendingAppointments,
+        getApprovedAppointments,
+        getDeletedAppointments,
         getAllAppointments,
         loading,
+        error,
         logout,
         login,
+        approveAppointment,
       }}
     >
       {children}
