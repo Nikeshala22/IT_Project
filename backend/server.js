@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: 'http://localhost:5174',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Added PATCH
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -61,7 +61,7 @@ app.get('/', (req, res) => {
 // Error Handler (Ensure CORS headers for error responses)
 app.use((err, req, res, next) => {
   console.error('🔥 Server Error:', err.stack);
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5174');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.status(500).json({
     success: false,
