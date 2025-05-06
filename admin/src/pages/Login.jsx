@@ -1,10 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { AppContent } from './context/AppContex';
 import { GiAutoRepair } from 'react-icons/gi';
-import Hero1 from '../assets/Home/Car2.jpg';
+import { useAppContext } from '../context/appContex'; // Correct import
 
 const Login = () => {
   const [state, setState] = useState('Sign Up');
@@ -15,13 +14,7 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
-  const context = useContext(AppContent);
-
-  if (!context) {
-    throw new Error('Login must be used within an AppContextProvider');
-  }
-
-  const { backendurl, setIsLoggedin, setUserData } = context;
+  const { backendurl, setIsLoggedin, setUserData } = useAppContext(); // Use hook instead of AppContext()
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +47,8 @@ const Login = () => {
             toast.success('Account created successfully!');
             setUserData({ name: formData.name, email: formData.email, role: 'user' });
             setIsLoggedin(true);
-            navigate('/user/');
+            setFormData({ name: '', email: '', password: '' });
+            navigate('/user');
             return;
           } else {
             toast.error(data.message || 'Signup failed');
@@ -67,14 +61,39 @@ const Login = () => {
           });
 
           if (data.success) {
-            if (data.user.role === 'user') {
-              toast.error('Invalid credentials');
+            const role = data.user.role;
+            const validRoles = ['inventoryadmin', 'appointmentadmin', 'orderadmin', 'jobsadmin'];
+
+            if (!validRoles.includes(role) && role !== 'user') {
+              toast.error('Invalid user role');
               return;
             }
+
             toast.success('Logged in successfully!');
             setUserData(data.user);
             setIsLoggedin(true);
-            navigate('/admin');
+            setFormData({ name: '', email: '', password: '' });
+
+            // Navigate based on role
+            switch (role) {
+              case 'inventoryadmin':
+                navigate('/inventory-dashboard');
+                break;
+              case 'appointmentadmin':
+                navigate('/appointment-dashboard');
+                break;
+              case 'orderadmin':
+                navigate('/order-dashboard');
+                break;
+              case 'jobsadmin':
+                navigate('/jobs-dashboard');
+                break;
+              case 'user':
+                navigate('/user');
+                break;
+              default:
+                toast.error('Unknown role');
+            }
             return;
           } else {
             toast.error(data.message || 'Login failed');
@@ -104,7 +123,7 @@ const Login = () => {
   return (
     <div
       className="relative flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8 bg-cover bg-center"
-      style={{ backgroundImage: `url(${Hero1})` }}
+      style={{ backgroundImage: `url($})` }}
     >
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-black/50 z-0"></div>

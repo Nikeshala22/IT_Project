@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable'; // Import autoTable explicitly
+import autoTable from 'jspdf-autotable';
 
-function AppointmentList() {
+function AppointmentList({ totalAppointments }) {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
@@ -11,12 +11,11 @@ function AppointmentList() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Fetch appointments from the API
   const fetchAppointments = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://localhost:9000/api/appointment/get-all-appointments');
+      const response = await fetch('http://localhost:4000/api/appointment/get-all-appointments');
       const result = await response.json();
 
       console.log('API Response:', result);
@@ -41,7 +40,6 @@ function AppointmentList() {
     fetchAppointments();
   }, []);
 
-  // Handle search input change
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -56,12 +54,11 @@ function AppointmentList() {
     }
   };
 
-  // Handle Delete Appointment
   const handleDelete = async (appointmentId) => {
     if (!window.confirm('Are you sure you want to delete this appointment?')) return;
 
     try {
-      const response = await fetch(`http://localhost:9000/api/appointment/delete-appointment/${appointmentId}`, {
+      const response = await fetch(`http://localhost:4000/api/appointment/delete-appointment/${appointmentId}`, {
         method: 'DELETE',
       });
       const result = await response.json();
@@ -78,26 +75,47 @@ function AppointmentList() {
     }
   };
 
-  // Handle Update navigation
   const handleUpdate = (appointmentId) => {
     navigate(`/appointment-update/${appointmentId}`);
   };
 
-  // Generate and download PDF
+  const handleApprove = async (appointmentId) => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/appointment/approve-appointment/${appointmentId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ approved: true }),
+      });
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('Appointment approved successfully!');
+        const updatedAppointments = appointments.map((appointment) =>
+          appointment._id === appointmentId ? { ...appointment, approved: true } : appointment
+        );
+        setAppointments(updatedAppointments);
+        setFilteredAppointments(updatedAppointments);
+      } else {
+        alert(`Failed to approve appointment: ${result.message || 'Please try again.'}`);
+      }
+    } catch (err) {
+      alert(`Error approving appointment: ${err.message}`);
+    }
+  };
+
   const downloadPDF = () => {
     const doc = new jsPDF();
 
-    // Add a header
     doc.setFontSize(20);
-    doc.setTextColor(3, 50, 111); // Dark blue color
+    doc.setTextColor(3, 50, 111);
     doc.text('Appointment List', 14, 20);
 
-    // Add a subtitle
     doc.setFontSize(12);
     doc.setTextColor(100);
     doc.text('Generated on: ' + new Date().toLocaleDateString(), 14, 30);
 
-    // Define table columns and data
     const tableColumns = [
       'Appointment ID',
       'Name',
@@ -105,7 +123,8 @@ function AppointmentList() {
       'Vehicle',
       'Date',
       'Time',
-      'Services'
+      'Services',
+      'Status'
     ];
     const tableRows = filteredAppointments.map(appointment => [
       appointment.AID,
@@ -114,40 +133,30 @@ function AppointmentList() {
       `${appointment.Avtype} (${appointment.Avnum})`,
       appointment.date,
       appointment.time,
-      appointment.service.join(', ')
+      appointment.service.join(', '),
+      appointment.approved ? 'Approved' : 'Pending'
     ]);
 
-    // Use autoTable directly
     autoTable(doc, {
       head: [tableColumns],
       body: tableRows,
       startY: 40,
-      styles: {
-        fontSize: 10,
-        cellPadding: 3,
-        overflow: 'linebreak',
-      },
-      headStyles: {
-        fillColor: [3, 50, 111], // Dark blue header
-        textColor: [255, 255, 255], // White text
-        fontStyle: 'bold',
-      },
-      alternateRowStyles: {
-        fillColor: [240, 240, 240], // Light gray for alternate rows
-      },
+      styles: { fontSize: 10, cellPadding: 3, overflow: 'linebreak' },
+      headStyles: { fillColor: [3, 50, 111], textColor: [255, 255, 255], fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [240, 240, 240] },
       columnStyles: {
-        0: { cellWidth: 30 }, // Appointment ID
-        1: { cellWidth: 30 }, // Name
-        2: { cellWidth: 25 }, // Phone
-        3: { cellWidth: 30 }, // Vehicle
-        4: { cellWidth: 20 }, // Date
-        5: { cellWidth: 25 }, // Time
-        6: { cellWidth: 30 }, // Services
+        0: { cellWidth: 25 },
+        1: { cellWidth: 25 },
+        2: { cellWidth: 25 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 20 },
+        5: { cellWidth: 20 },
+        6: { cellWidth: 30 },
+        7: { cellWidth: 20 },
       },
       margin: { top: 40 },
     });
 
-    // Add footer
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
@@ -156,11 +165,9 @@ function AppointmentList() {
       doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 20, doc.internal.pageSize.height - 10, { align: 'right' });
     }
 
-    // Save the PDF
     doc.save('appointment_list.pdf');
   };
 
-  // Handle loading and error states
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -193,7 +200,7 @@ function AppointmentList() {
             <h1 className="text-3xl font-bold text-gray-800">
               Appointment <span className="text-blue-600">List</span>
             </h1>
-            <p className="mt-1 text-sm text-gray-500">View and manage your scheduled appointments</p>
+            <p className="mt-1 text-sm text-gray-500">View and manage your scheduled appointments (Total: {totalAppointments})</p>
           </div>
           <div className="flex space-x-4">
             <Link
@@ -211,7 +218,6 @@ function AppointmentList() {
           </div>
         </div>
 
-        {/* Search Bar */}
         <div className="mb-6">
           <input
             type="text"
@@ -238,6 +244,7 @@ function AppointmentList() {
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b border-gray-200">Date</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b border-gray-200">Time</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b border-gray-200">Services</th>
+                  <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b border-gray-200">Status</th>
                   <th className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b border-gray-200">Actions</th>
                 </tr>
               </thead>
@@ -255,6 +262,9 @@ function AppointmentList() {
                     <td className="px-4 py-2 text-sm text-gray-800 border-b border-gray-200">
                       {appointment.service.join(', ')}
                     </td>
+                    <td className="px-4 py-2 text-sm text-gray-800 border-b border-gray-200">
+                      {appointment.approved ? 'Approved' : 'Pending'}
+                    </td>
                     <td className="px-4 py-2 text-sm border-b border-gray-200">
                       <div className="flex space-x-2">
                         <button
@@ -269,6 +279,14 @@ function AppointmentList() {
                         >
                           Delete
                         </button>
+                        {!appointment.approved && (
+                          <button
+                            onClick={() => handleApprove(appointment._id)}
+                            className="bg-green-600 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-green-700 transition-all duration-300"
+                          >
+                            Approve
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

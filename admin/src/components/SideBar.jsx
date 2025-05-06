@@ -1,6 +1,6 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
-import { assets } from '../assets/assets'
+
 
 const SideBar = () => {
     return (
@@ -10,7 +10,7 @@ const SideBar = () => {
                     `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
                         isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''
                     }`}>
-                    <img src={assets.home_icon} alt="Dashboard" />
+                    <img src alt="Dashboard" />
                     <p>Dashboard</p>
                 </NavLink>
 
@@ -18,7 +18,7 @@ const SideBar = () => {
                     `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
                         isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''
                     }`}>
-                    <img src={assets.list_icon} alt="All Parts" />
+                    <img src alt="All Parts" />
                     <p>All Spare Parts</p>
                 </NavLink>
 
@@ -26,7 +26,7 @@ const SideBar = () => {
                     `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${
                         isActive ? 'bg-[#F2F3FF] border-r-4 border-primary' : ''
                     }`}>
-                    <img src={assets.add_icon} alt="Add Part" />
+                    <img srcalt="Add Part" />
                     <p>Add Spare Part</p>
                 </NavLink>
             </ul>

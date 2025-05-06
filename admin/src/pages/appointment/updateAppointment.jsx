@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useAppContext } from '../../context/appContex';
 
 function AppointmentUpdate() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { getAllAppointments } = useAppContext(); // Use context to refresh appointments
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
@@ -47,7 +49,7 @@ function AppointmentUpdate() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch('http://localhost:9000/api/appointment/get-all-appointments');
+      const response = await fetch('http://localhost:4000/api/appointment/get-all-appointments');
       const result = await response.json();
       if (response.ok) {
         setExistingAppointments(result.appointments || []);
@@ -63,7 +65,7 @@ function AppointmentUpdate() {
     const fetchAppointment = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:9000/api/appointment/view-appointment/${id}`);
+        const response = await fetch(`http://localhost:4000/api/appointment/view-appointment/${id}`);
         const result = await response.json();
 
         if (response.ok) {
@@ -81,7 +83,7 @@ function AppointmentUpdate() {
             date: result.date || '',
             time: result.time || '',
           });
-          setPhoneInput(result.Aphone ? result.Aphone.slice(3) : ''); // Remove +94 prefix
+          setPhoneInput(result.Aphone ? result.Aphone.slice(3) : '');
           setLoading(false);
         } else {
           setError(result.message || 'Failed to fetch appointment');
@@ -319,7 +321,7 @@ function AppointmentUpdate() {
     };
 
     try {
-      const response = await fetch(`http://localhost:9000/api/appointment/update-appointment/${id}`, {
+      const response = await fetch(`http://localhost:4000/api/appointment/update-appointment/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -330,6 +332,7 @@ function AppointmentUpdate() {
       const result = await response.json();
 
       if (response.ok) {
+        await getAllAppointments(); // Refresh appointments in context
         alert('Appointment updated successfully!');
         navigate('/appointments');
       } else {
@@ -337,7 +340,11 @@ function AppointmentUpdate() {
       }
     } catch (err) {
       console.error('Update Error:', err);
-      alert(`Error updating appointment: ${err.message}`);
+      if (err.message.includes('Failed to fetch')) {
+        alert('Error updating appointment: CORS issue or server not responding. Please check the backend CORS configuration.');
+      } else {
+        alert(`Error updating appointment: ${err.message}`);
+      }
     }
   };
 
