@@ -48,7 +48,7 @@ function AppointmentForm() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/appointment/get-appointments');
+      const response = await fetch('http://localhost:4000/api/appointment/get-appointments');
       const result = await response.json();
       if (response.ok) {
         setExistingAppointments(result.appointments || []);
@@ -313,7 +313,7 @@ function AppointmentForm() {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/api/appointment/add-appointment', {
+      const response = await fetch('http://localhost:4000/api/appointment/add-appointment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
