@@ -12,7 +12,7 @@ import Login from './Login';
 import Dashboard from './pages/order/Dashboard';
 import PaymentsPageAdmin from './pages/payment/PaymentsPageAdmin';
 import OrdersPageAdmin from './pages/order/OrdersPageAdmin';
-import MyProfile from './pages/order/MyProfile';
+import MyProfile from '../../frontend/src/pages/user/MyProfile';
 import AdminSidebar from './pages/order/AdminSidebar';
 import SideBar from './components/SparePartsAdminSideBar';
 

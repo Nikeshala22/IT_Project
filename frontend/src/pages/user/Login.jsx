@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { FaSignInAlt, FaUser } from 'react-icons/fa';
-import { useAuth } from '../../context/authContext/authContext';
+import { AuthContext, useAuth } from '../../context/authContext/authContext';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -15,6 +15,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [isRegister, setIsRegister] = useState(false);
+    const { currentUser } = useContext(AuthContext);
 
     useEffect(() => {
     if (currentUser) {

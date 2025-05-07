@@ -14,6 +14,7 @@ import PaymentPage from './pages/payment/PaymentPage';
 import PaymentSuccessPage from './pages/payment/PaymentSuccessPage';
 import Login from './pages/user/Login';
 import { useAuth } from './context/authContext/authContext';
+import MyProfile from './pages/user/MyProfile';
 
 // Protected Route Wrapper
 const ProtectedRoute = () => {
@@ -55,6 +56,7 @@ function App() {
         <Route path="/order-review" element={<OrderReviewPage />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/payment-success" element={<PaymentSuccessPage />} />
+        <Route path="/my-profile" element={<MyProfile />} />
       </Route>
 
       {/* Catch-all for undefined routes */}

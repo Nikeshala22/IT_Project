@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaUser, FaBox, FaEdit, FaSignOutAlt } from 'react-icons/fa';
-import { useAuth } from '../../../../frontend/src/context/authContext/authContext.jsx';
+import { useAuth } from '../../context/authContext/authContext.jsx';
 
 const MyProfile = () => {
     const { currentUser, logout } = useAuth();
@@ -30,11 +30,7 @@ const MyProfile = () => {
                 return;
             }
 
-            const response = await axios.get('http://localhost:4000/api/orders', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await axios.get('http://localhost:4000/api/orders',);
 
             setOrders(response.data);
             setError(null);
