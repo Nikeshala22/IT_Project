@@ -82,15 +82,29 @@ const DashBoard = () => {
 
   return (
     <div className="p-6">
-      {/* Header Section */}
+      {/* Header Section with Navigation Buttons */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold text-gray-800">Inventory Dashboard</h1>
-        <button
-          onClick={handleExportPDF}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Export as PDF
-        </button>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/all-spare-parts"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            All Spare Parts
+          </Link>
+          <Link
+            to="/add-spare-part"
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Add Spare Part
+          </Link>
+          <button
+            onClick={handleExportPDF}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Export as PDF
+          </button>
+        </div>
       </div>
 
       {/* Statistics Cards */}

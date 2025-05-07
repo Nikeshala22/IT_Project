@@ -4,12 +4,15 @@ import './index.css'
 import App from './App.jsx'
 import {BrowserRouter} from 'react-router-dom'
 import InventoryContextProvider from './context/adminSparePartsContext/InventoryContext.jsx'
+import { AppContextProvider } from './context/adminPackagesContext/appContex.jsx'
 
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <InventoryContextProvider>
-      <App />
+      <AppContextProvider>
+        <App />
+      </AppContextProvider>
     </InventoryContextProvider>
   </BrowserRouter>,
 )

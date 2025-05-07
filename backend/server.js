@@ -1,11 +1,14 @@
-// server.js
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config.js';
+import cookieParser from 'cookie-parser';
 import connectDB from './config/mongoDb.js';
 import connectCloudinary from './config/cloudinary.js';
 import inventoryRouter from './router/inventryRouter.js';
-
+import authRouter from './router/authRoutes.js';
+import userRouter from './router/userRouter.js';
+import appointmentRouter from './router/appointmentRouter.js';
+import servicePackageRouter from './router/servicepackageRouter.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -16,37 +19,56 @@ const __dirname = dirname(__filename);
 const app = express();
 const port = process.env.PORT || 4000;
 
-//connect everything
+// Connect to DB and Cloudinary
 connectDB();
 connectCloudinary();
 
-//middleware
-app.use(cors());
-app.use(express.json());
-// Add this middleware before your routes
+// CORS configuration: Allow all origins dynamically
+const corsOptions = {
+  origin: (incomingOrigin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps or curl)
+    if (!incomingOrigin) return callback(null, true);
+    // Reflect the request origin
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// Middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// JSON headers
 app.use((req, res, next) => {
-    res.header('Content-Type', 'application/json; charset=utf-8');
-    next();
+  res.header('Content-Type', 'application/json; charset=utf-8');
+  next();
 });
 
-
+// API routes
 app.use('/api/inventory', inventoryRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/user', userRouter);
+app.use('/api/appointment', appointmentRouter);
+app.use('/api/service', servicePackageRouter);
 
-
-
-
-// Add error handling middleware before static files
+// Error handling
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ success: false, error: 'Internal server error' });
+  console.error(err.stack);
+  res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
-// Then serve static files and catch-all
-app.use(express.static(join(__dirname, '../client/build')));
-app.get('*', (req, res) => {
-    res.sendFile(join(__dirname, '../client/build/index.html'));
-});
+// // Serve static React build for production
+// app.use(express.static(join(__dirname, '../client/build')));
+// app.get('*', (req, res) => {
+//   res.sendFile(join(__dirname, '../client/build/index.html'));
+// });
 
+// Start server
 app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
+  console.log(`Server started on port ${port}`);
 });

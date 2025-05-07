@@ -1,80 +1,86 @@
 import React, { useState, useContext } from "react";
 import { assets } from "../../assets/assets";
 import { InventoryContext } from "../../context/adminSparePartsContext/InventoryContext";
-import { toast } from 'react-toastify'
-import axios from 'axios'
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const AddSparePart = () => {
-  const [partImg, setPartImg] = useState(false)
-  const [name, setName] = useState('')
-  const [brand, setBrand] = useState('')
-  const [modelNumber, setModelNumber] = useState('')
-  const [quantity, setQuantity] = useState('')
-  const [price, setPrice] = useState('')
-  const [color, setColor] = useState('#000000')
-  const [dimensions, setDimensions] = useState({
-    length: '',
-    width: '',
-    height: ''
-  })
+  const navigate = useNavigate();
+  const [partImg, setPartImg] = useState(null);
+  const [name, setName] = useState('');
+  const [brand, setBrand] = useState('');
+  const [modelNumber, setModelNumber] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [price, setPrice] = useState('');
+  const [color, setColor] = useState('#000000');
+  const [dimensions, setDimensions] = useState({ length: '', width: '', height: '' });
 
-  const { addSparePart } = useContext(InventoryContext)
-
-  const onSubmitHandler = async (event) => {
-    event.preventDefault()
-
-    try {
-      if (!partImg) {
-        return toast.error("Image Not Selected!")
-      }
-
-      const formData = new FormData()
-      formData.append('image', partImg)
-      formData.append('name', name)
-      formData.append('brand', brand)
-      formData.append('modelNumber', modelNumber)
-      formData.append('quantity', Number(quantity))
-      formData.append('price', Number(price))
-      formData.append('color', color)
-      formData.append('dimensions.length', dimensions.length)
-      formData.append('dimensions.width', dimensions.width)
-      formData.append('dimensions.height', dimensions.height)
-
-      const result = await addSparePart(formData)
-
-      if (result?.success) {
-
-        setPartImg(false)
-        setName('')
-        setBrand('')
-        setModelNumber('')
-        setQuantity('')
-        setPrice('')
-        setColor('#000000')
-        setDimensions({ length: '', width: '', height: '' })
-      }
-
-    } catch (error) {
-      toast.error(error.message)
-      console.log(error)
-    }
-  }
+  const { addSparePart } = useContext(InventoryContext);
 
   const handleDimensionChange = (dimension, value) => {
     setDimensions(prev => ({
       ...prev,
       [dimension]: value
-    }))
-  }
+    }));
+  };
+
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+    try {
+      if (!partImg) return toast.error("Image Not Selected!");
+
+      const formData = new FormData();
+      formData.append('image', partImg);
+      formData.append('name', name);
+      formData.append('brand', brand);
+      formData.append('modelNumber', modelNumber);
+      formData.append('quantity', Number(quantity));
+      formData.append('price', Number(price));
+      formData.append('color', color);
+      formData.append('dimensions.length', dimensions.length);
+      formData.append('dimensions.width', dimensions.width);
+      formData.append('dimensions.height', dimensions.height);
+
+      const result = await addSparePart(formData);
+      if (result?.success) {
+        toast.success("Spare part added!");
+        setPartImg(null);
+        setName('');
+        setBrand('');
+        setModelNumber('');
+        setQuantity('');
+        setPrice('');
+        setColor('#000000');
+        setDimensions({ length: '', width: '', height: '' });
+      }
+    } catch (error) {
+      toast.error(error.message || "Error adding part");
+      console.error(error);
+    }
+  };
 
   return (
-    <form onSubmit={onSubmitHandler} className="w-full m-5">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Add New Spare Part</h2>
-        <p className="text-gray-500 text-sm">Please fill in all required fields (*)</p>
+    <div className="w-full m-5">
+      {/* Navigation Buttons */}
+      <div className="flex justify-end space-x-4 mb-6">
+        <button
+          type="button"
+          onClick={() => navigate('/all-spare-parts')}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md"
+        >
+          All Spare Parts
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/inventoryadmin-dashboard')}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+        >
+          Dashboard
+        </button>
       </div>
 
-      <div className="bg-white px-8 py-8 border rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto shadow-sm">
+      {/* Add Spare Part Form */}
+      <form onSubmit={onSubmitHandler} className="ml-50 bg-white px-8 py-8 border rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto shadow-sm">
         <div className="flex items-center gap-4 mb-8">
           <label
             htmlFor="part-img"
@@ -114,73 +120,50 @@ const AddSparePart = () => {
           {/* Left Column */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Part Name *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Part Name *</label>
               <input
                 value={name}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Allow only letters and spaces
-                  if (/^[a-zA-Z\s]*$/.test(value)) {
-                    setName(value);
-                  }
-                }}
+                onChange={(e) => /^[a-zA-Z\s]*$/.test(e.target.value) && setName(e.target.value)}
                 type="text"
                 placeholder="Enter part name"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 transition-all"
                 required
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Brand *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Brand *</label>
               <input
                 value={brand}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Allow only letters and spaces
-                  if (/^[a-zA-Z\s]*$/.test(value)) {
-                    setBrand(value);
-                  }
-                }}
+                onChange={(e) => /^[a-zA-Z\s]*$/.test(e.target.value) && setBrand(e.target.value)}
                 type="text"
                 placeholder="Enter brand name"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 transition-all"
                 required
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Model Number *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Model Number *</label>
               <input
                 value={modelNumber}
                 onChange={(e) => setModelNumber(e.target.value)}
                 type="number"
                 placeholder="Enter model number"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 transition-all"
                 required
               />
             </div>
-
             <fieldset className="border border-gray-200 p-4 rounded-lg">
               <legend className="text-sm font-medium text-gray-700 px-2">Dimensions (cm) *</legend>
               <div className="grid grid-cols-3 gap-4">
-                {['length', 'width', 'height'].map((dimension) => (
+                {['length','width','height'].map(dimension => (
                   <div key={dimension}>
-                    <label className="block text-xs text-gray-500 mb-1 capitalize">
-                      {dimension}
-                    </label>
+                    <label className="block text-xs text-gray-500 mb-1 capitalize">{dimension}</label>
                     <input
                       value={dimensions[dimension]}
                       onChange={(e) => handleDimensionChange(dimension, e.target.value)}
                       type="number"
                       step="0.01"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 transition-all"
                       required
                     />
                   </div>
@@ -192,50 +175,41 @@ const AddSparePart = () => {
           {/* Right Column */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Quantity *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
               <input
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 type="number"
                 placeholder="Enter quantity"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 transition-all"
                 min="0"
                 required
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Price ($) *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Price ($) *</label>
               <input
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 type="number"
                 step="0.01"
                 placeholder="Enter price"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-600 transition-all"
                 min="0"
                 required
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Color *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Color *</label>
               <div className="flex items-center gap-3">
                 <input
                   type="color"
                   value={color}
                   onChange={(e) => setColor(e.target.value)}
                   className="w-12 h-12 border border-gray-300 rounded-md cursor-pointer"
+                  required
                 />
-                <span className="text-sm text-gray-500">
-                  Selected: {color.toUpperCase()}
-                </span>
+                <span className="text-sm text-gray-500">Selected: {color.toUpperCase()}</span>
               </div>
             </div>
           </div>
@@ -244,13 +218,13 @@ const AddSparePart = () => {
         <div className="mt-8 flex justify-end">
           <button
             type="submit"
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors shadow-sm focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md focus:ring-2 focus:ring-blue-600 transition-colors shadow-sm"
           >
             Add Spare Part
           </button>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 
