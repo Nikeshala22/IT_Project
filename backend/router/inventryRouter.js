@@ -1,8 +1,8 @@
 // Instead of `const express = require('express');`
 import express from 'express';
 import { validateSparePart } from '../middleware/validateSpareParts.js';
-import { addSparePart, deleteSparePart, exportInventoryPDF, getAllSpareParts, getSparePartById, getTotalInventoryValue, getTotalSparePartsCount, updateSparePart } from '../controllers/admin/inventryController.js';
 import upload from '../middleware/multer.js';
+import { addSparePart, deleteSparePart, exportInventoryPDF, getAllSpareParts, getSparePartById, getTotalInventoryValue, getTotalSparePartsCount, updateSparePart } from '../controllers/spareParts/inventryController.js';
 const inventoryRouter = express.Router();
 
 // Define routes

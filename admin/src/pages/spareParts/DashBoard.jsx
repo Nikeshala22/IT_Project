@@ -20,34 +20,34 @@ const DashBoard = () => {
   // DashBoard.jsx - Update the export handler
   const handleExportPDF = async () => {
     try {
-      const response = await fetch(`${backendUrl}/api/inventory/export-pdf`);
-
+      const response = await fetch(`http://localhost:4000/api/inventory/export-pdf`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/pdf'
+        }
+      });
+  
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'PDF export failed');
+        throw new Error('PDF export failed');
       }
-
+  
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
-
-      // Create temporary link and trigger download
+  
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.setAttribute('download', 'inventory-report.pdf');
       document.body.appendChild(link);
       link.click();
-
-      // Cleanup
+  
       document.body.removeChild(link);
       window.URL.revokeObjectURL(downloadUrl);
-
+  
       toast.success('PDF exported successfully');
     } catch (error) {
       toast.error(error.message);
-      console.error('Export Error:', error);
     }
   };
-
   // Data Loading Effect
   useEffect(() => {
     const loadData = async () => {

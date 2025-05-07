@@ -62,7 +62,7 @@ const SpareParts = () => {
                 <div className="relative max-w-md">
                     <input
                         type="text"
-                        placeholder="Search parts by name or model..."
+                        placeholder="Search parts by name..."
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -166,6 +166,15 @@ const SpareParts = () => {
                                                 Qty: {item.quantity}
                                             </span>
                                         </div>
+                                        <div className="mt-4">
+                                        <button
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg disabled:bg-gray-400"
+                                            onClick={() => handleOrder(item)}
+                                            disabled={item.quantity === 0}
+                                        >
+                                            {item.quantity > 0 ? "Order Now" : "Out of Stock"}
+                                        </button>
+                                    </div>
                                     </div>
                                 </div>
                             ))}

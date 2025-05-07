@@ -33,6 +33,8 @@ app.use((req, res, next) => {
 app.use('/api/inventory', inventoryRouter);
 
 
+
+
 // Add error handling middleware before static files
 app.use((err, req, res, next) => {
     console.error(err.stack);
