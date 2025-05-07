@@ -142,7 +142,7 @@ const Login = () => {
           </h2>
           <p className="mt-4 text-gray-600 text-base font-semibold">
             {state === 'Sign Up'
-              ? 'Join MOTRONE for top-notch vehicle services'
+              ? 'Join WASH AN GO for top-notch vehicle services'
               : 'Login to access your account'}
           </p>
         </div>

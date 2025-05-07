@@ -32,8 +32,8 @@ export const register = async(req,res)=>{
         const mailOptions= {
             from:process.env.SENDER_EMAIL,
             to: email,
-            subject:'Welcome to MOTRONE vehicle service center',
-            text:`Welcome to MOTRONE vehicle service center website. Your account has been created with email id:${email}`
+            subject:'Welcome to WASH AND GO vehicle service center',
+            text:`Welcome to WASH AND GO vehicle service center website. Your account has been created with email id:${email}`
         }
         await transporter.sendMail(mailOptions);
 

@@ -116,7 +116,7 @@ const Login = () => {
       <div className="absolute inset-0 bg-black/50 z-0"></div>
       <div className="absolute top-8 left-8 sm:top-10 sm:left-12 flex items-center text-white text-2xl font-bold tracking-wider z-20 cursor-pointer">
         <GiAutoRepair className="text-[#006AFF] mx-2" />
-        MOTRONE
+        WASH AND GO
       </div>
       <div className="relative w-full max-w-md p-8 bg-white rounded-xl shadow-2xl hover:shadow-[0_10px_20px_rgba(0,106,255,0.3)] transition-shadow duration-300 z-10">
         <div className="text-center mb-8">
