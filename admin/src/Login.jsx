@@ -87,13 +87,10 @@ const Login = () => {
                 navigate('/appointmentadmin-dashboard');
                 break;
               case 'orderadmin':
-                navigate('/order-dashboard');
+                navigate('/orderadmin-dashboard');
                 break;
               case 'jobsadmin':
                 navigate('/jobs-dashboard');
-                break;
-              case 'user':
-                navigate('/user');
                 break;
               default:
                 toast.error('Unknown role');
@@ -175,7 +172,6 @@ const Login = () => {
                 required
               >
                 <option value="">Select Role</option>
-                <option value="user">User</option>
                 <option value="appointmentadmin">Appointment Admin</option>
                 <option value="inventoryadmin">Inventory Admin</option>
                 <option value="orderadmin">Order Admin</option>

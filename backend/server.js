@@ -11,6 +11,8 @@ import appointmentRouter from './router/appointmentRouter.js';
 import servicePackageRouter from './router/servicepackageRouter.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import orderRouter from './router/OrderRoutes.js';
+import paymentRouter from './router/PaymentRoutes.js';
 
 // __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -55,6 +57,9 @@ app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/appointment', appointmentRouter);
 app.use('/api/service', servicePackageRouter);
+app.use('/api/orders',orderRouter);
+app.use('/api/payments',paymentRouter);
+
 
 // Error handling
 app.use((err, req, res, next) => {
@@ -62,11 +67,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
-// // Serve static React build for production
-// app.use(express.static(join(__dirname, '../client/build')));
-// app.get('*', (req, res) => {
-//   res.sendFile(join(__dirname, '../client/build/index.html'));
-// });
 
 // Start server
 app.listen(port, () => {

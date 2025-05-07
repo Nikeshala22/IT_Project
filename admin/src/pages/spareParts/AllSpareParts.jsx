@@ -37,24 +37,6 @@ const AllSpareParts = () => {
 
   return (
     <div className="p-6">
-      {/* Navigation Buttons */}
-      <div className="flex justify-end space-x-4 mb-6">
-        <button
-          type="button"
-          onClick={() => navigate('/inventoryadmin-dashboard')}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md"
-        >
-          Dashboard
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/add-spare-part')}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
-        >
-          Add Spare Part
-        </button>
-      </div>
-
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Spare Parts Inventory</h2>
         <p className="text-gray-500 mt-1">{filteredParts.length} parts available</p>

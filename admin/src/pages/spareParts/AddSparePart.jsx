@@ -61,26 +61,8 @@ const AddSparePart = () => {
 
   return (
     <div className="w-full m-5">
-      {/* Navigation Buttons */}
-      <div className="flex justify-end space-x-4 mb-6">
-        <button
-          type="button"
-          onClick={() => navigate('/all-spare-parts')}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md"
-        >
-          All Spare Parts
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/inventoryadmin-dashboard')}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
-        >
-          Dashboard
-        </button>
-      </div>
-
       {/* Add Spare Part Form */}
-      <form onSubmit={onSubmitHandler} className="ml-50 bg-white px-8 py-8 border rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto shadow-sm">
+      <form onSubmit={onSubmitHandler} className=" bg-white px-8 py-8 border rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto shadow-sm">
         <div className="flex items-center gap-4 mb-8">
           <label
             htmlFor="part-img"

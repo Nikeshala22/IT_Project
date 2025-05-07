@@ -9,6 +9,13 @@ import DashBoard from './pages/spareParts/DashBoard';
 import UpdateSparePart from './pages/spareParts/UpdateSpareParts';
 import AddSparePart from './pages/spareParts/AddSparePart';
 import Login from './Login';
+import Dashboard from './pages/order/Dashboard';
+import PaymentsPageAdmin from './pages/payment/PaymentsPageAdmin';
+import OrdersPageAdmin from './pages/order/OrdersPageAdmin';
+import MyProfile from './pages/order/MyProfile';
+import AdminSidebar from './pages/order/AdminSidebar';
+import SideBar from './components/SparePartsAdminSideBar';
+
 
 
 // Error Boundary Class Component
@@ -41,7 +48,7 @@ class ErrorBoundary extends Component {
 }
 
 // Placeholder components for other dashboards
-const OrderDashboard = () => <div>Order Dashboard</div>;
+
 const JobsDashboard = () => <div>Jobs Dashboard</div>;
 const AdminDashboard = () => <div>Admin Dashboard</div>;
 const UserDashboard = () => <div>User Dashboard</div>;
@@ -106,6 +113,39 @@ const RootRedirect = () => {
   }
 };
 
+//layout component for order admin routes
+const OrderAdminLayout = () => {
+  const { isLoggedin, userData } = useAppContext();
+
+  if (!isLoggedin) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (userData.role !== 'orderadmin') {
+    return <Unauthorized />;
+  }
+
+  return (
+    <div className="flex min-h-screen">
+      <AdminSidebar />
+      <div className="flex-1 p-6 ml-64"> {/* Adjust margin-left to match sidebar width */}
+        <Outlet />
+      </div>
+    </div>
+  );
+};
+
+const InventoryAdminLayout = () => {
+  return (
+    <div className="flex min-h-screen">
+      <SideBar/>
+      <div className="flex-1 p-6 ml-5"> {/* Adjust margin-left to match sidebar width */}
+        <Outlet />
+      </div>
+    </div>
+  );
+}
+
 const App = () => {
   return (
     <ErrorBoundary>
@@ -120,8 +160,6 @@ const App = () => {
         {/* Admin Layout with NavBar and SideBar */}
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/inventoryadmin-dashboard" element={<DashBoard />} />
-          <Route path="/order-dashboard" element={<OrderDashboard />} />
           <Route path="/jobs-dashboard" element={<JobsDashboard />} />
 
           {/* AppointmentAdmin-only Routes */}
@@ -132,9 +170,20 @@ const App = () => {
           </Route>
 
           {/* Spare Parts Dashboards */}
-            <Route path='/all-spare-parts' element={<AllSpareParts />} />
-            <Route path='/add-spare-part' element={<AddSparePart />} />
-            <Route path='/update-spare-part/:id' element={<UpdateSparePart />} />
+        <Route element={<InventoryAdminLayout />}>
+          <Route path="/inventoryadmin-dashboard" element={<DashBoard />} />
+          <Route path='/all-spare-parts' element={<AllSpareParts />} />
+          <Route path='/add-spare-part' element={<AddSparePart />} />
+          <Route path='/update-spare-part/:id' element={<UpdateSparePart />} />
+        </Route>
+
+          {/* Order Dashboard */}
+        <Route element={<OrderAdminLayout />}>
+          <Route path='/payment-admin' element={<PaymentsPageAdmin />} />
+          <Route path='/order-admin' element={<OrdersPageAdmin />} />
+          <Route path="/orderadmin-dashboard" element={<Dashboard />} />
+        </Route>
+
         </Route>
 
         {/* Fallback for unknown routes */}
