@@ -123,9 +123,6 @@ const MyProfile = () => {
                             <div className="bg-white rounded-xl shadow-md p-6 md:p-8 border border-purple-100">
                                 <div className="flex justify-between items-center mb-6">
                                     <h2 className="text-2xl font-semibold text-purple-800">Profile Information</h2>
-                                    <button className="flex items-center text-purple-600 font-medium hover:text-purple-800 transition-colors">
-                                        <FaEdit className="mr-1" /> Edit
-                                    </button>
                                 </div>
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div>

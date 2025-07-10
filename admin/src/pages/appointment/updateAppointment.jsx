@@ -170,7 +170,7 @@ function AppointmentUpdate() {
       setErrors((prevErrors) => ({ ...prevErrors, Aname: '' }));
     }
   };
-
+//validation part
   const validatePhoneNumber = (phone) => {
     const phoneRegex = /^\d{9}$/;
     const firstDigit = phone.slice(0, 1);
